@@ -110,6 +110,9 @@ def time_evaluation(variant: str, runs: int):
             start_sign = perf_counter()
             signature = signer.sign(message)
             end_sign = perf_counter()
+            
+            sigSize = len(signature)
+            # print(f"Signature size: {sigSize} bytes")
 
             sign_time = (end_sign - start_sign) * 1000
 
@@ -127,7 +130,8 @@ def time_evaluation(variant: str, runs: int):
             "variant": variant,
             "keypair": keypair_time,
             "sign": sign_time,
-            "verify": verify_time
+            "verify": verify_time,
+            "sigSize": sigSize
         })
 
     return results

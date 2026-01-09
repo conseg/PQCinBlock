@@ -42,7 +42,7 @@ def _run_selected_variants(file_runs, file_mean_std, variants_by_module, functio
 
         for level, variant in levels.items():
             try:
-                logging.info(f"\t\tRunning algorithm:{algorithm}\tlevel:{level}\tvariant:{variant}  (using {module}.py)...")
+                logging.info(f"\t\tRunning algorithm: {algorithm}\tlevel: {level}\tvariant: {variant}  (using {module}.py)...")
 
                 # Warm-up
                 func(variant, runs=warm_up)
@@ -62,7 +62,7 @@ def _run_selected_variants(file_runs, file_mean_std, variants_by_module, functio
                 df_mean_std = utils.compute_mean_std(
                     df=df_time_evaluation, 
                     group_by="variant",
-                    columns=["keypair","sign","verify"]
+                    columns=["keypair","sign","verify", "sigSize"]
                 )
                 
                 # Save average and std results for this run
@@ -79,6 +79,7 @@ def _run_selected_variants(file_runs, file_mean_std, variants_by_module, functio
                 logging.info(f"\t\t\t{'mean keypair':<{mean_label_width}} = {row['mean_keypair']:.6f} ms\t{'std keypair':<{std_label_width}} = {row['std_keypair']:.6f} ms")
                 logging.info(f"\t\t\t{'mean sign':<{mean_label_width}} = {row['mean_sign']:.6f} ms\t{'std sign':<{std_label_width}} = {row['std_sign']:.6f} ms")
                 logging.info(f"\t\t\t{'mean verify':<{mean_label_width}} = {row['mean_verify']:.6f} ms\t{'std verify':<{std_label_width}} = {row['std_verify']:.6f} ms")
+                logging.info(f"\t\t\t{'mean sigSize':<{mean_label_width}} = {row['mean_sigSize']:.6f} bytes\t{'std sigSize':<{std_label_width}} = {row['std_sigSize']:.6f} bytes")
             
             except Exception as e:
                 logging.error(f"\t\tError: {module}/{variant}: {e}")
