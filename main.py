@@ -49,7 +49,7 @@ def _export_input_and_system_info(args, results_dir):
         filename=Path(results_dir) / "input-and-system-info.json"
     )
 
-def _run_simulator_only(args, filtered_algorithms, parser):
+def _run_simulator_only(args, filtered_algorithms, parser, timestamp):
 
     try:
         input_path = Path(args.input_file)
@@ -94,7 +94,8 @@ def _run_simulator_only(args, filtered_algorithms, parser):
 
     results_dir = save.create_results_directory(
         algorithms_dict=filtered_algorithms,
-        levels=sorted(list(levels_present))
+        levels=sorted(list(levels_present)),
+        timestamp=timestamp
     )
 
     _export_input_and_system_info(args, results_dir)
@@ -214,7 +215,7 @@ def main():
         if not args.runs_simulator:
             parser.error("--runs-simulator must be provided with --input-file.")
         else:
-            _run_simulator_only(args, filtered_algorithms, parser)
+            _run_simulator_only(args, filtered_algorithms, parser, timestamp)
     elif args.sign:
         path_csv = _run_benchmark(results_dir, args, filtered_algorithms)
         _run_simulator(args, filtered_algorithms, results_dir, path_csv)
