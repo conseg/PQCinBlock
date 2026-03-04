@@ -1,0 +1,76 @@
+{
+  "config": {
+    "input_file": null,
+    "levels": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "list_sign": false,
+    "model": [
+      2
+    ],
+    "runs": 10000,
+    "runs_simulator": 0,
+    "sign": [
+      "ecdsa",
+      "mldsa",
+      "dilithium",
+      "falcon",
+      "falcon-padded",
+      "mayo",
+      "sphincs-sha-s",
+      "sphincs-sha-f",
+      "sphincs-shake-s",
+      "sphincs-shake-f",
+      "cross-rsdp-small",
+      "cross-rsdpg-small",
+      "cross-rsdp-balanced",
+      "cross-rsdpg-balanced",
+      "cross-rsdp-fast",
+      "cross-rsdpg-fast"
+    ],
+    "verbosity": 20,
+    "warm_up": 1000
+  },
+  "system_metadata": {
+    "timestamp": "2026-01-24T17:32:21.365696",
+    "platform": {
+      "system": "Linux",
+      "release": "6.12.62+rpt-rpi-v8",
+      "version": "#1 SMP PREEMPT Debian 1:6.12.62-1+rpt1~bookworm (2026-01-19)",
+      "machine": "aarch64"
+    },
+    "python": {
+      "version": "3.11.2",
+      "compiler": "GCC 12.2.0",
+      "implementation": "CPython"
+    },
+    "cpu": {
+      "brand": "Cortex-A72",
+      "cores_physical": 4,
+      "cores_logical": 4,
+      "hz_advertised": "1.8000 GHz",
+      "hz_actual": "1.8000 GHz",
+      "architecture": "aarch64"
+    },
+    "memory": {
+      "total_gb": 3.71
+    },
+    "timer": {
+      "perf_counter_resolution_ns": 147.96387404203415,
+      "perf_counter_units": "seconds (float)",
+      "time_ns_available": true
+    },
+    "environment": {
+      "cpu_governor": "ondemand",
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3
+      ]
+    }
+  }
+}
