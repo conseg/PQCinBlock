@@ -5,3 +5,7 @@ venv/
 *.log
 */__pycache__/*
 *.pyc
+Inputs/*
+sigResults/*
+graphics/*
+temp*

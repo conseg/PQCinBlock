@@ -50,6 +50,10 @@ def time_evaluation(variant: str, runs: int):
 
         sigSize = len(signature)
         # print(f"Signature size: {sigSize} bytes")
+        private_key_size = sk.key_size // 8
+        public_key_size = pk.key_size // 8
+        # print(f"Private key size: {private_key_size} bytes")
+        # print(f"Public key size: {public_key_size} bytes")
         
         try:
             start_verify=perf_counter()
@@ -69,7 +73,9 @@ def time_evaluation(variant: str, runs: int):
             "keypair": keypair_time,
             "sign": sign_time,
             "verify": verify_time,
-            "sigSize": sigSize
+            "sigSize": sigSize,
+            "privateKeySize": private_key_size,
+            "publicKeySize": public_key_size
         })
 
     return results

@@ -62,7 +62,7 @@ def _run_selected_variants(file_runs, file_mean_std, variants_by_module, functio
                 df_mean_std = utils.compute_mean_std(
                     df=df_time_evaluation, 
                     group_by="variant",
-                    columns=["keypair","sign","verify", "sigSize"]
+                    columns=["keypair","sign","verify", "sigSize", "privateKeySize", "publicKeySize"]
                 )
                 
                 # Save average and std results for this run
@@ -80,6 +80,8 @@ def _run_selected_variants(file_runs, file_mean_std, variants_by_module, functio
                 logging.info(f"\t\t\t{'mean sign':<{mean_label_width}} = {row['mean_sign']:.6f} ms\t{'std sign':<{std_label_width}} = {row['std_sign']:.6f} ms")
                 logging.info(f"\t\t\t{'mean verify':<{mean_label_width}} = {row['mean_verify']:.6f} ms\t{'std verify':<{std_label_width}} = {row['std_verify']:.6f} ms")
                 logging.info(f"\t\t\t{'mean sigSize':<{mean_label_width}} = {row['mean_sigSize']:.6f} bytes\t{'std sigSize':<{std_label_width}} = {row['std_sigSize']:.6f} bytes")
+                logging.info(f"\t\t\t{'mean privateKeySize':<{mean_label_width}} = {row['mean_privateKeySize']:.6f} bytes\t{'std privateKeySize':<{std_label_width}} = {row['std_privateKeySize']:.6f} bytes")
+                logging.info(f"\t\t\t{'mean publicKeySize':<{mean_label_width}} = {row['mean_publicKeySize']:.6f} bytes\t{'std publicKeySize':<{std_label_width}} = {row['std_publicKeySize']:.6f} bytes")
             
             except Exception as e:
                 logging.error(f"\t\tError: {module}/{variant}: {e}")
