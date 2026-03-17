@@ -57,6 +57,10 @@ def main():
                 std_verify = float(line["std_verify"])
                 p.mean_verify = mean_verify
                 p.std_verify = std_verify
+                # p.mean_creation = float(line["mean_creation"])
+                # p.std_creation = float(line["std_creation"])
+                p.mean_tx_size = float(line["mean_sign"])
+                p.std_tx_size = float(line["std_sign"])
 
             except Exception as e:
                 logging.exception(e)

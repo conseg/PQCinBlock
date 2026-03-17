@@ -33,6 +33,7 @@ class Block(BaseBlock):
         self.gaslimit= gaslimit
         self.usedgas= usedgas
         self.transactions_verification_time = 0.0
+        self.block_artifacts_size = 0.0
     
     # Calculate the sum of the creation times of the transactions
     def calculate_transactions_verification_time(self):
@@ -40,3 +41,17 @@ class Block(BaseBlock):
         for t in self.transactions:
             acc += t.verification_time
         self.transactions_verification_time = acc
+    
+    
+    # def calculate_transactions_creation_time(self):
+    #     acc =0
+    #     for t in self.transactions:
+    #         acc += t.creation_time
+    #     self.transactions_creation_time = acc
+
+    def calculate_block_artifacts_size(self):
+        acc = 0
+        for t in self.transactions:
+            acc += t.artifacts_size
+        self.block_artifacts_size = acc
+    

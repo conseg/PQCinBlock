@@ -21,6 +21,7 @@ class Statistics:
     index=0
     chain=[]
     blocks_verification_times = []
+    blocks_artifacts_sizes = []
 
     def calculate():
         Statistics.global_chain() # print the global chain
@@ -72,11 +73,13 @@ class Statistics:
                         block= [i.depth, i.id, i.previous, i.timestamp, i.miner, len(i.transactions), i.size, i.transactions_verification_time]
                         Statistics.chain +=[block]
                         Statistics.blocks_verification_times.append(i.transactions_verification_time)
+                        Statistics.blocks_artifacts_sizes.append(i.block_artifacts_size)
         elif p.model==2:
                 for i in c.global_chain:
                         block= [i.depth, i.id, i.previous, i.timestamp, i.miner, len(i.transactions), i.usedgas, len(i.uncles), i.transactions_verification_time]
                         Statistics.chain +=[block]
                         Statistics.blocks_verification_times.append(i.transactions_verification_time)
+                        Statistics.blocks_artifacts_sizes.append(i.block_artifacts_size)
 
     ########################################################### Print simulation results to Excel ###########################################################################################
     def print_to_excel(fname):
@@ -109,7 +112,7 @@ class Statistics:
 
     def print_to_csv(outfile):
         # cabecalho = ["variant", "mean_verify", "std_verify"]
-        cabecalho = ["variant", "verify"]
+        cabecalho = ["variant", "verify", "artifacts_size"]
         # filename = "saida.csv"
         # filedir = "results"
         # filepath = filedir+"/"+filename
@@ -147,8 +150,10 @@ class Statistics:
                     mean_blocks = np.nan
                     # std_verify = np.nan
                 
+                mean_artifacts_size = np.mean(Statistics.blocks_artifacts_sizes) if Statistics.blocks_artifacts_sizes else np.nan
+                
                 # writer.writerow([p.variant, mean_blocks, std_verify])
-                writer.writerow([p.variant, mean_blocks])
+                writer.writerow([p.variant, mean_blocks, mean_artifacts_size])
         except Exception as e:
             print(f"Error: {e} in create csv")
 
@@ -169,3 +174,4 @@ class Statistics:
         Statistics.index=0
         Statistics.chain=[]
         Statistics.blocks_verification_times=[]
+        Statistics.blocks_artifacts_sizes=[]

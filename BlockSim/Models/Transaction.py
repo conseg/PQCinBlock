@@ -28,7 +28,10 @@ class Transaction(object):
          to=0,
          value=0,
 	 size=0.000546,
-         fee=0):
+         fee=0,
+         artifacts_size=0.0,
+         creation_time = 0.0,
+         verification_time = 0.0):
 
         self.id = id
         self.timestamp = timestamp
@@ -37,7 +40,9 @@ class Transaction(object):
         self.value=value
         self.size = size
         self.fee= fee
-        self.verification_time = 0.0
+        self.verification_time = verification_time
+        self.creation_time = creation_time
+        self.artifacts_size = artifacts_size
 
 
 class LightTransaction():
@@ -61,6 +66,8 @@ class LightTransaction():
             tx.size= random.expovariate(1/p.Tsize)
             tx.fee= random.expovariate(1/p.Tfee)
             tx.verification_time = calculate_verification_time()
+            # tx.creation_time = calculate_creation_time()
+            tx.artifacts_size = calculate_transaction_artifacts_size()
 
             pool += [tx]
 
@@ -105,6 +112,9 @@ class FullTransaction():
             tx.to= random.choice (p.NODES).id
             tx.size= random.expovariate(1/p.Tsize)
             tx.fee= random.expovariate(1/p.Tfee)
+            # tx.creation_time = calculate_creation_time()
+            tx.verification_time = calculate_verification_time()
+            tx.artifacts_size = calculate_transaction_artifacts_size()
 
             sender.transactionsPool.append(tx)
             FullTransaction.transaction_prop(tx)
@@ -139,3 +149,9 @@ class FullTransaction():
 
 def calculate_verification_time():
     return random.gauss(mu=p.mean_verify,sigma=p.std_verify)
+
+def calculate_transaction_artifacts_size():
+    return random.gauss(mu=p.mean_tx_size,sigma=p.std_tx_size)
+
+# def calculate_creation_time():
+#     return random.gauss(mu=p.mean_creation,sigma=p.std_creation)

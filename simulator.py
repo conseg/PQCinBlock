@@ -52,7 +52,7 @@ def simulator(results_dir, model, input_file, runs, variants_by_module):
     df_simulator_mean_std = utils.compute_mean_std(
         df=df, 
         group_by='variant',
-        columns=["verify"],
+        columns=["verify", "artifacts_size"],
     )
     
     logging.info("")

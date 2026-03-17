@@ -34,7 +34,8 @@ class Transaction(object):
          gasPrice=0,
          fee=0,
          creation_time = 0.0,
-         verification_time = 0.0):
+         verification_time = 0.0,
+         artifacts_size = 0.0):
 
         self.id = id
         self.timestamp = timestamp
@@ -49,6 +50,7 @@ class Transaction(object):
         # Creation time in the transaction based on benchmarks
         self.creation_time = creation_time
         self.verification_time = verification_time
+        self.artifacts_size = artifacts_size
 
 
 
@@ -77,8 +79,9 @@ class LightTransaction():
             tx.usedGas=usedGas[i]
             tx.gasPrice=gasPrice[i]/1000000000
             tx.fee= tx.usedGas * tx.gasPrice
-            tx.creation_time = calculate_creation_time()
+            # tx.creation_time = calculate_creation_time()
             tx.verification_time = calculate_verification_time()
+            tx.artifacts_size = calculate_transaction_artifacts_size()
 
             LightTransaction.pool += [tx]
 
@@ -129,8 +132,9 @@ class FullTransaction():
             tx.usedGas=usedGas[i]
             tx.gasPrice=gasPrice[i]/1000000000
             tx.fee= tx.usedGas * tx.gasPrice
-            tx.creation_time = calculate_creation_time()
+            # tx.creation_time = calculate_creation_time()
             tx.verification_time = calculate_verification_time()
+            tx.artifacts_size = calculate_transaction_artifacts_size()
 
             sender.transactionsPool.append(tx)
             FullTransaction.transaction_prop(tx)
@@ -163,42 +167,15 @@ class FullTransaction():
 
         return transactions, limit
 
-# TODO use the more acurate values
-def calculate_creation_time():
-    mean = 113086.11
-    standard_deviation = 52726.01806856582
-    return random.gauss(mu=mean,sigma=standard_deviation)
+# Calculate the transaction creation time based on benchmarks
+# def calculate_creation_time():
+#     return random.gauss(mu=p.mean_creation,sigma=p.std_creation)
 
-# TODO use the more acurate values
+# Calculate the verification time based on benchmarks
 def calculate_verification_time():
-    # language_algorithm = (p.means_from_language, p.Signing_Algorithm)
-
-    # match language_algorithm:
-    #     case ("Java", "ECDSA384"):
-    #         mean = 0.18335970950
-    #         standard_deviation = 0.01330874960
-    #     case ("Java", "Dillithium3"):
-    #         mean = 0.49128941910
-    #         standard_deviation = 0.30889319890 
-    #     case ("Java", "Sphincs+192f"):
-    #         mean = 56.09813371590
-    #         standard_deviation = 0.38878176013
-
-    #     case ("Python", "ECDSA384"):
-    #         mean = 0.36977098660
-    #         standard_deviation = 0.00168400000
-    #     case ("Python", "Dillithium3"):
-    #         mean = 0.03722764010
-    #         standard_deviation = 0.00059083910
-    #     case ("Python", "Sphincs+192f"):
-    #         mean = 0.63858025320
-    #         standard_deviation = 0.00761349060
-
-    #     case ("C-C++", "ECDSA384"):
-    #         mean = 1.02015166
-    #         standard_deviation = 0.005019122382
-    #     case ("C-C++", "Dillithium3"):
-    #         mean = 0.1111510
-    #         standard_deviation = 0.06584563651
-
     return random.gauss(mu=p.mean_verify,sigma=p.std_verify)
+
+# Calculate the transaction artifacts size based on benchmarks
+# mean and std could be only the signature or signature + public key
+def calculate_transaction_artifacts_size():
+    return random.gauss(mu=p.mean_tx_size,sigma=p.std_tx_size)

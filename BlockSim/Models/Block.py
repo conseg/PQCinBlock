@@ -28,9 +28,23 @@ class Block(object):
         self.transactions = transactions or []
         self.size = size
         self.transactions_verification_time = 0.0
+        self.block_artifacts_size = 0.0
+        self.transactions_creation_time = 0.0
 
     def calculate_transactions_verification_time(self):
         acc =0
         for t in self.transactions:
             acc += t.verification_time
         self.transactions_verification_time = acc
+    
+    # def calculate_transactions_creation_time(self):
+    #     acc =0
+    #     for t in self.transactions:
+    #         acc += t.creation_time
+    #     self.transactions_creation_time = acc
+    
+    def calculate_block_artifacts_size(self):
+        acc = 0
+        for t in self.transactions:
+            acc += t.artifacts_size
+        self.block_artifacts_size = acc
