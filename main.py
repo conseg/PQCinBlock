@@ -182,6 +182,7 @@ def main():
     parser.add_argument("--list-sign", help="List of variants digital signature algorithms", action="store_true")
     parser.add_argument("--runs-simulator", help="Number of simulator runs", type=utils.non_negative_int, default=0)
     parser.add_argument("--input-file", "-i", help="Input CSV file for the simulator to run independently of benchmark.", type=str)
+    parser.add_argument("--simulation-case", "-sc", help="Choose a simulation case.", type=str)
     help_msg = "verbosity logging level (INFO=%d DEBUG=%d)" % (logging.INFO, logging.DEBUG)
     parser.add_argument("--verbosity", "-v", help=help_msg, default=logging.INFO, type=int)
 
