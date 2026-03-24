@@ -178,4 +178,4 @@ def calculate_verification_time():
 # Calculate the transaction artifacts size based on benchmarks
 # mean and std could be only the signature or signature + public key
 def calculate_transaction_artifacts_size():
-    return random.gauss(mu=p.mean_tx_size,sigma=p.std_tx_size)
+    return random.gauss(mu=p.mean_artifacts_size,sigma=p.std_artifacts_size)

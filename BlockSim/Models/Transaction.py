@@ -151,7 +151,7 @@ def calculate_verification_time():
     return random.gauss(mu=p.mean_verify,sigma=p.std_verify)
 
 def calculate_transaction_artifacts_size():
-    return random.gauss(mu=p.mean_tx_size,sigma=p.std_tx_size)
+    return random.gauss(mu=p.mean_artifacts_size,sigma=p.std_artifacts_size)
 
 # def calculate_creation_time():
 #     return random.gauss(mu=p.mean_creation,sigma=p.std_creation)

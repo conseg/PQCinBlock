@@ -59,8 +59,14 @@ def main():
                 p.std_verify = std_verify
                 # p.mean_creation = float(line["mean_creation"])
                 # p.std_creation = float(line["std_creation"])
-                p.mean_tx_size = float(line["mean_sign"])
-                p.std_tx_size = float(line["std_sign"])
+                # Only the signature size
+                # Scenario 2: signature size only
+                p.mean_artifacts_size = float(line["mean_sigSize"])
+                p.std_artifacts_size = float(line["std_sigSize"])
+                # Signature + public key size
+                # Scenario 1: signature + public key size
+                # p.mean_artifacts_size = float(line["mean_sigSize"]) + float(line["mean_publicKeySize"])
+                # p.std_artifacts_size = float(line["std_sigSize"]) + float(line["std_publicKeySize"])
 
             except Exception as e:
                 logging.exception(e)
