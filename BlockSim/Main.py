@@ -67,6 +67,9 @@ def main():
                 # Scenario 1: signature + public key size
                 # p.mean_artifacts_size = float(line["mean_sigSize"]) + float(line["mean_publicKeySize"])
                 # p.std_artifacts_size = float(line["std_sigSize"]) + float(line["std_publicKeySize"])
+                # Scenario 3: signature * n + 1 * public key size
+                p.mean_publicKeySize = float(line["mean_publicKeySize"])
+                p.std_publicKeySize = float(line["std_publicKeySize"])
 
             except Exception as e:
                 logging.exception(e)

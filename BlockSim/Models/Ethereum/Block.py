@@ -49,9 +49,11 @@ class Block(BaseBlock):
     #         acc += t.creation_time
     #     self.transactions_creation_time = acc
 
-    def calculate_block_artifacts_size(self):
+    def calculate_block_artifacts_size(self, mean_publicKeySize=0.0):
         acc = 0
         for t in self.transactions:
             acc += t.artifacts_size
+        # Scenario 3: signature * n + 1 * public key size
+        acc += mean_publicKeySize
         self.block_artifacts_size = acc
     

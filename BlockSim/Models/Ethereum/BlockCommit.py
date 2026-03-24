@@ -32,7 +32,8 @@ class BlockCommit(BaseBlockCommit):
                 event.block.transactions = blockTrans
                 event.block.usedgas= blockSize
                 event.block.calculate_transactions_verification_time()
-                event.block.calculate_block_artifacts_size()
+                # Scenario 3: signature * n + 1 * public key size
+                event.block.calculate_block_artifacts_size(p.mean_publicKeySize)
                 # event.block.calculate_transactions_creation_time()
 
             if p.hasUncles:
