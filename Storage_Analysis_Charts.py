@@ -107,37 +107,85 @@ def plot_scenario_comparison(path_csv, config_plot, break_even_pairs, max_transa
 # EXAMPLE OF USE
 # =======================================================
 if __name__ == "__main__":
-    path_csv = 'results-bcra/case2/benchmark/time-evaluation-mean-std.csv' 
+    path_csv = 'results-bcra/InputBenchmark/time-evaluation-mean-std.csv' 
 
-    fig_name = 'analise-nv3-edgecase1-pqc.pdf'
-    
+    # fig_name = 'analise-nv3-edgecase1-pqc.pdf'
+    output_dir = 'results-bcra/paper_graphics'
     max_transactions = 10
 
-    # Format: ('Variant', Scenario(1, 2 or 3), 'Style', 'Color')
-    configs = [
-        # ('MAYO-5',  1, '-', '#2ca02c'),             # Verde (Cenário 1: Apenas Sig)
-        ('MAYO-3',  2, '-', '#2ca02c'),             # Verde (Cenário 1: Apenas Sig)
-        # ('MAYO-5',  3, '-', '#2ca02c'),             # Verde (Cenário 1: Apenas Sig)
-        # ('Falcon-padded-512', 1, '-', '#1f77b4'),  # Azul (Cenário 2: Sig + PK)
-        # ('Falcon-padded-512', 2, '-', '#1f77b4'),  # Azul (Cenário 2: Sig + PK)
-        # ('Falcon-padded-512', 3, '-', "#1f77b4"),  # Azul (Cenário 2: Sig + PK)
-        # ('Falcon-padded-1024', 1, '-', "#1f77b4"),  # Azul (Cenário 2: Sig + PK)
-        # ('Falcon-padded-1024', 2, '-', '#1f77b4'),  # Azul (Cenário 2: Sig + PK)
-        # ('Falcon-padded-1024', 3, '-', '#1f77b4'),  # Azul (Cenário 2: Sig + PK)
-        # ('ML-DSA-87', 1, '-', '#ff7f0e'),            # Laranja (Cenário 3: 1 PK fixa + n*Sig)
-        # ('ML-DSA-87', 2, '-', '#ff7f0e'),            # Laranja (Cenário 3: 1 PK fixa + n*Sig)
-        ('ML-DSA-65', 2, '-', '#ff7f0e'),            # Laranja (Cenário 3: 1 PK fixa + n*Sig)
-        # ('P-521', 1, '-', '#8c564b'),              # Marrom (Cenário 1: Apenas Sig)
-        # ('P-521', 2, '-', '#8c564b'),             # Marrom (Cenário 1: Apenas Sig)
-        # ('P-521', 3, '-', '#8c564b')              # Marrom (Cenário 1: Apenas Sig)
-    ]
+    configs = { 
+    "All_Scenarios-lv1":[
+        ('MAYO-2',  1, '-', '#2ca02c'),             # Green (scenario 1: Sig only)
+        ('MAYO-2',  2, '-', '#2ca02c'),             # Green (scenario 2: Sig + PK)
+        ('MAYO-2',  3, '-', '#2ca02c'),             # Green (scenario 3: 1 PK fixed + n*Sig)
+        ('Falcon-padded-512', 1, '-', '#1f77b4'),  # Blue (scenario 1: Sig only)
+        ('Falcon-padded-512', 2, '-', '#1f77b4'),  # Blue (scenario 2: Sig + PK)
+        ('Falcon-padded-512', 3, '-', '#1f77b4'),  # Blue (scenario 3: 1 PK fixed + n*Sig)
+        ('ML-DSA-44', 1, '-', '#ff7f0e'),            # Orange (scenario 1: Sig only)
+        ('ML-DSA-44', 2, '-', '#ff7f0e'),            # Orange (scenario 2: Sig + PK)
+        ('ML-DSA-44', 3, '-', '#ff7f0e'),            # Orange (scenario 3: 1 PK fixed + n*Sig)
+        ('P-256', 1, '-', '#8c564b'),              # Brown (scenario 1: Sig only)
+        ('P-256', 2, '-', '#8c564b'),             # Brown (scenario 2: Sig + PK)
+        ('P-256', 3, '-', '#8c564b')              # Brown (scenario 3: 1 PK fixed + n*Sig)
+    ],
+    "All_Scenarios-lv3":[
+        ('MAYO-3',  1, '-', '#2ca02c'),             # Green (scenario 1: Sig only)
+        ('MAYO-3',  2, '-', '#2ca02c'),             # Green (scenario 2: Sig + PK)
+        ('MAYO-3',  3, '-', '#2ca02c'),             # Green (scenario 3: 1 PK fixed + n*Sig)
+        ('ML-DSA-65', 1, '-', '#ff7f0e'),            # Orange (scenario 1: Sig only)
+        ('ML-DSA-65', 2, '-', '#ff7f0e'),            # Orange (scenario 2: Sig + PK)
+        ('ML-DSA-65', 3, '-', '#ff7f0e'),            # Orange (scenario 3: 1 PK fixed + n*Sig)
+        ('P-384', 1, '-', '#8c564b'),              # Brown (scenario 1: Sig only)
+        ('P-384', 2, '-', '#8c564b'),             # Brown (scenario 2: Sig + PK)
+        ('P-384', 3, '-', '#8c564b')              # Brown (scenario 3: 1 PK fixed + n*Sig)
+    ],
+    "All_Scenarios-lv5":[
+        ('MAYO-5',  1, '-', '#2ca02c'),             # Green (scenario 1: Sig only)
+        ('MAYO-5',  2, '-', '#2ca02c'),            # Green (scenario 2: Sig + PK)
+        ('MAYO-5',  3, '-', '#2ca02c'),             # Green (scenario 3: 1 PK fixed + n*Sig)
+        ('Falcon-padded-1024', 1, '-', "#1f77b4"),  # Blue (scenario 1: Sig only)
+        ('Falcon-padded-1024', 2, '-', '#1f77b4'),  # Blue (scenario 2: Sig + PK)
+        ('Falcon-padded-1024', 3, '-', '#1f77b4'),  # Blue (scenario 3: 1 PK fixed + n*Sig)
+        ('ML-DSA-87', 1, '-', '#ff7f0e'),            # Orange (scenario 1: Sig only)
+        ('ML-DSA-87', 2, '-', '#ff7f0e'),            # Orange (scenario 2: Sig + PK)
+        ('ML-DSA-87', 3, '-', '#ff7f0e'),            # Orange (scenario 3: 1 PK fixed + n*Sig)
+        ('P-521', 1, '-', '#8c564b'),              # Brown (scenario 1: Sig only)
+        ('P-521', 2, '-', '#8c564b'),             # Brown (scenario 2: Sig + PK)
+        ('P-521', 3, '-', '#8c564b')              # Brown (scenario 3: 1 PK fixed + n*Sig)
+    ],
+    
+    "Edge_case_1(lv3)": [
+        ('MAYO-3',  2, '-', '#2ca02c'),             # Green (scenario 2: Sig + PK)
+        ('ML-DSA-65', 2, '-', '#ff7f0e')             # Orange (scenario 2: Sig + PK)
+    ],
 
-    # Break-even tuples use the format "Variant_C[scenario_number]" to allow comparing the same algorithm in different scenarios.
-    pairs = [
-        ('Falcon-padded-512_C3', 'MAYO-2_C3'),
-        ('Falcon-padded-1024_C3', 'MAYO-5_C3'),
-        ('ML-DSA-65_C3', 'MAYO-3_C3')
+    "Edge_case_2(lv1)": [
+        ('MAYO-2',  3, '-', '#2ca02c'),             # Green (scenario 2: Sig + PK)
+        ('Falcon-padded-512', 3, '-', '#1f77b4')    # Blue (scenario 2: Sig + PK)
+    ],
+    
+    "Edge_case_2(lv3)": [
+        ('MAYO-3',  3, '-', '#2ca02c'),             # Green (scenario 3: 1 PK fixed + n*Sig)
+        ('ML-DSA-65', 3, '-', '#ff7f0e')             # Orange (scenario 3: 1 PK fixed + n*Sig)
+    ],
+
+    "Edge_case_2(lv5)": [
+        ('MAYO-5',  3, '-', '#2ca02c'),             # Green (scenario 3: 1 PK fixed + n*Sig)
+        ('Falcon-padded-1024', 3, '-', '#1f77b4')    # Blue (scenario 3: 1 PK fixed + n*Sig)
     ]
+    }
+    
+    # list_of_configs = [configs1, configs2, configs3, configs4, configs5, configs6, configs7]
 
     
-    plot_scenario_comparison(path_csv, configs, pairs, max_transactions=max_transactions, fig_name=fig_name)
+    for name, configs in configs.items():
+        if name.startswith("Edge_case"):
+            # Break-even tuples use the format "Variant_C[scenario_number]" to allow comparing the same algorithm in different scenarios.
+            pairs = [
+                ('Falcon-padded-512_C3', 'MAYO-2_C3'),
+                ('Falcon-padded-1024_C3', 'MAYO-5_C3'),
+                ('ML-DSA-65_C3', 'MAYO-3_C3')
+            ]
+        else:
+            pairs = []
+        plot_scenario_comparison(path_csv, configs, pairs, max_transactions=max_transactions, fig_name=f"{output_dir}/{name}.pdf")

@@ -1,0 +1,80 @@
+{
+  "config": {
+    "input_file": "Inputs/sigs/benchmark/time-evaluation-mean-std.csv",
+    "levels": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "list_sign": false,
+    "model": [
+      1,
+      2
+    ],
+    "runs": 1,
+    "runs_simulator": 1000,
+    "sign": [
+      "ecdsa",
+      "mldsa",
+      "dilithium",
+      "falcon",
+      "falcon-padded",
+      "mayo",
+      "sphincs-sha-s",
+      "sphincs-sha-f",
+      "sphincs-shake-s",
+      "sphincs-shake-f",
+      "cross-rsdp-small",
+      "cross-rsdpg-small",
+      "cross-rsdp-balanced",
+      "cross-rsdpg-balanced",
+      "cross-rsdp-fast",
+      "cross-rsdpg-fast"
+    ],
+    "simulation_case": null,
+    "verbosity": 20,
+    "warm_up": 0
+  },
+  "system_metadata": {
+    "timestamp": "2026-03-20T08:36:42.202105",
+    "platform": {
+      "system": "Linux",
+      "release": "6.17.0-19-generic",
+      "version": "#19-Ubuntu SMP PREEMPT_DYNAMIC Fri Mar  6 14:02:58 UTC 2026",
+      "machine": "x86_64"
+    },
+    "python": {
+      "version": "3.13.7",
+      "compiler": "GCC 15.2.0",
+      "implementation": "CPython"
+    },
+    "cpu": {
+      "brand": "Intel(R) Core(TM) i5-8500 CPU @ 3.00GHz",
+      "cores_physical": 6,
+      "cores_logical": 6,
+      "hz_advertised": "3.0000 GHz",
+      "hz_actual": "4.0865 GHz",
+      "architecture": "x86_64"
+    },
+    "memory": {
+      "total_gb": 14.9
+    },
+    "timer": {
+      "perf_counter_resolution_ns": 48.98174665868282,
+      "perf_counter_units": "seconds (float)",
+      "time_ns_available": true
+    },
+    "environment": {
+      "cpu_governor": "powersave",
+      "cpu_affinity": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ]
+    }
+  }
+}
