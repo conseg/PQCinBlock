@@ -3,7 +3,7 @@
 <!-- [Demo Video](https://youtu.be/CNKmvOyZqm0) -->
 
 **PQCinBlock** is a modular and extensible benchmark tool for evaluating post-quantum digital signature (PQC) algorithms in blockchain environments.
-It enables direct cryptographic performance measurements and realistic blockchain network simulations through integration with the BlockSim simulator.
+It allows for the direct measurement of cryptographic operation performance and the impact of cryptographic artifact sizes, as well as realistic blockchain network simulations, through integration with the BlockSim simulator.
 
 ## Table of Contents
 
@@ -28,8 +28,8 @@ It enables direct cryptographic performance measurements and realistic blockchai
 
 The tool consists of three main modules, each responsible for a specific part of the evaluation process.
 
-1. **`benchmark`**: Executes algorithms and measures signing, verification, and key generation times.
-2. **`simulator`**: Simulates blockchain networks using the collected timing data.
+1. **`benchmark`**: Executes algorithms and measures signing, verification, and key generation times and sizes.
+2. **`simulator`**: It simulates blockchain networks using collected timing and size data.
 3. **`graph`**: Generates charts from the data of the previous two modules.
 
 ### Directory Structure
@@ -37,11 +37,11 @@ The tool consists of three main modules, each responsible for a specific part of
 PQCinBlock/
 ├── algorithms/           # PQC algorithm implementations (with ALGORITHMS and time_evaluation)
 ├── BlockSim/             # Blockchain simulator source code (BlockSim)
-├── results-paper/        # Complete results used in the paper
+├── results-paper/        # Complete results used in the papers (v1 and v2)
 ├── results/              # Execution results in CSV and charts (not versioned)
 ├── visualization/        # Chart generation from execution results
 ├── venv/                 # Python virtual environment (not versioned)
-├── benchmark.py        # Signature algorithms benchmarking module
+├── benchmark.py          # Signature algorithms benchmarking module
 ├── graph.py              # Auxiliary chart generation script
 ├── info.py               # Auxiliary metadata collector
 ├── install.sh            # Main installation script
@@ -49,12 +49,13 @@ PQCinBlock/
 ├── main.py               # Main script orchestrating all steps
 ├── README.md             # This documentation file
 ├── requirements.txt      # Required Python dependencies
-├── run_benchmark_and_simulator.sh     # Runs all experiments described in the paper
+├── run_benchmark_and_simulator.sh     # Runs all experiments described in the paper (v1)
 ├── run_benchmark_only.sh # Run all algorithms, but no simulations
 ├── run_simulator_only.sh # Run only the simulator using data from an input file
 ├── save.py               # Result saving functions
 ├── simulator.py          # BlockSim interface and execution with collected data
 ├── utils.py              # Auxiliary utility functions
+├── Storage_Analysis_Charts.py  # Auxiliary chart generation script tailored to storage analysis
 ```
 
 ## Requirements
@@ -109,6 +110,7 @@ deactivate
 | `--levels`         | Defines the NIST security levels (1 to 5) of the algorithms to be tested. Can receive multiple values. |
 | `--model` | Defines the *BlockSim* model to use (1: Bitcoin, 2: Ethereum). Can receive multiple values. |
 | `--runs-simulator` | Number of simulation runs in *BlockSim*. |
+| `--simulation-scenario` | Defines the cryptographic artifact sizes simulation scenario (1: digital signature size only ,2: digital signature + public keys sizes, 3: n * digital signatures + 1 * public key)
 
 
 ## Execution
@@ -234,20 +236,26 @@ This section describes the step-by-step process for reproducing the experiments 
 
 The experiments were performed in three hardware configurations:
 
-- **Laptop ARM**
+- **Laptop ARM** (performance evaluation)
   - Apple M1
   - macOS Darwin Kernel 24.0.0
   - 8 GB RAM
 
-- **Laptop x64**
+- **Laptop x64** (performance evaluation)
   - Intel Core i7-1360P
   - Ubuntu 22.04.1 LTS Linux Kernel 6.8.0-65-generic
   - 32 GB RAM
 
-- **Desktop**
+- **Desktop** (performance evaluation)
   - AMD Ryzen 7 5800X
   - Ubuntu 24.04.2 LTS Linux Kernel 6.8.0-64-generic
   - 80 GB RAM
+
+- **Desktop** (storage evaluation)
+  - Intel Core i5-8500
+  - Ubuntu 25.10 Linux Kernel 6.17.0-20-generic
+  - 16 GB RAM
+  - 234 GB disk space
 
 
 ### Installation and Setup
@@ -276,6 +284,8 @@ source venv/bin/activate
 ### Evaluating the Impact of Algorithms on Blockchain Simulation
 
 **Goal:** Simulate the impact of algorithms on block verification times in a blockchain network, using BlockSim, for NIST security levels 1, 3, and 5.
+
+#### Performance
 
 **Command:**
 
@@ -309,6 +319,43 @@ python main.py --sign \
 
 - Flags used: `--sign`, `--runs`, `--warm-up`, `--levels`, `--model`, `--runs-simulator`.
 - Estimated runtime: 10–16 hours depending on the machine used.
+- Results: CSV files and charts in `./results/`.
+
+#### Storage
+
+**Command**
+
+Run a performance test using the `run_benchmark_only.sh` script, and then use the `run_multiples_simulation_scenarios.sh` script or the following command, pointing the CSV_FILE variable to the file generated by the performance test and changing the simulation-scenario variable to the desired scenario..
+
+```
+
+CSV_FILE="$1"
+
+python main.py --sign \
+    ecdsa \
+    mldsa \
+    dilithium \
+    falcon \
+    falcon-padded \
+    mayo \
+    sphincs-sha-s \
+    sphincs-sha-f \
+    sphincs-shake-s \
+    sphincs-shake-f \
+    cross-rsdp-small \
+    cross-rsdpg-small \
+    cross-rsdp-balanced \
+    cross-rsdpg-balanced \
+    cross-rsdp-fast \
+    cross-rsdpg-fast \
+    --levels 1 2 3 5 \
+    --input-file "$CSV_FILE" \
+    --model 1 2 \
+    --runs-simulator 2 \
+    --simulation-scenario 1
+```
+**Notes**
+- Estimated runtime: ~4 hours to benchmar and ~16 hours to each simulation (based on the storage evaluation desktop machine).
 - Results: CSV files and charts in `./results/`.
 
 ## License
