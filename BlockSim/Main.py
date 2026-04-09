@@ -53,23 +53,29 @@ def main():
             p.variant = line["variant"]
             logging.info(f"\tRunning {p.variant}...")
             try:                
-                mean_verify = float(line["mean_verify"])
-                std_verify = float(line["std_verify"])
-                p.mean_verify = mean_verify
-                p.std_verify = std_verify
+                p.mean_verify = float(line["mean_verify"])
+                p.std_verify = float(line["std_verify"])
                 # p.mean_creation = float(line["mean_creation"])
                 # p.std_creation = float(line["std_creation"])
-                # Only the signature size
-                # Scenario 2: signature size only
-                p.mean_artifacts_size = float(line["mean_sigSize"])
-                p.std_artifacts_size = float(line["std_sigSize"])
-                # Signature + public key size
-                # Scenario 1: signature + public key size
-                # p.mean_artifacts_size = float(line["mean_sigSize"]) + float(line["mean_publicKeySize"])
-                # p.std_artifacts_size = float(line["std_sigSize"]) + float(line["std_publicKeySize"])
+                
+                p.mean_artifacts_size = 0
+                p.std_artifacts_size = 0
+                # Scenario 1: signature size only
+                if p.simulation_scenario == 1:
+                    p.mean_artifacts_size = float(line["mean_sigSize"])
+                    p.std_artifacts_size = float(line["std_sigSize"])
+                
+                # Scenario 2: signature + public key size
+                if p.simulation_scenario == 2:
+                    p.mean_artifacts_size = float(line["mean_sigSize"]) + float(line["mean_publicKeySize"])
+                    p.std_artifacts_size = float(line["std_sigSize"]) + float(line["std_publicKeySize"])
+                
                 # Scenario 3: signature * n + 1 * public key size
-                p.mean_publicKeySize = float(line["mean_publicKeySize"])
-                p.std_publicKeySize = float(line["std_publicKeySize"])
+                if p.simulation_scenario == 3:
+                    p.mean_artifacts_size = float(line["mean_sigSize"])
+                    p.std_artifacts_size = float(line["std_sigSize"])
+                    p.mean_publicKeySize = float(line["mean_publicKeySize"])
+                    p.std_publicKeySize = float(line["std_publicKeySize"])
 
             except Exception as e:
                 logging.exception(e)

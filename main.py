@@ -148,12 +148,16 @@ def _run_simulator(args, filtered_algorithms, results_dir, path_csv):
         logging.info("+-----------------+") 
 
         for model in args.model:                    
+            if args.simulation_scenario:
+                logging.info(f"Running simulation scenario: {args.simulation_scenario} for model {model}")
+
             path_csv_simulator = simulator(
                 results_dir=results_dir,
                 model=model,
                 input_file=path_csv,
                 runs=args.runs_simulator,
                 variants_by_module=filtered_algorithms,
+                simulation_scenario=args.simulation_scenario
             )
 
         graph.generate_simulator_graphs (
@@ -182,7 +186,7 @@ def main():
     parser.add_argument("--list-sign", help="List of variants digital signature algorithms", action="store_true")
     parser.add_argument("--runs-simulator", help="Number of simulator runs", type=utils.non_negative_int, default=0)
     parser.add_argument("--input-file", "-i", help="Input CSV file for the simulator to run independently of benchmark.", type=str)
-    parser.add_argument("--simulation-case", "-sc", help="Choose a simulation case.", type=str)
+    parser.add_argument("--simulation-scenario", "-sc", help="Choose a simulation scenario.", type=int, default= 2, choices=[1, 2, 3])
     help_msg = "verbosity logging level (INFO=%d DEBUG=%d)" % (logging.INFO, logging.DEBUG)
     parser.add_argument("--verbosity", "-v", help=help_msg, default=logging.INFO, type=int)
 
