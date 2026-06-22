@@ -147,7 +147,7 @@ def _run_simulator(args, filtered_algorithms, results_dir, path_csv):
         logging.info("  SIMULATION      ")
         logging.info("+-----------------+") 
 
-        for model in args.model:                    
+        for model in args.blockchain_model:                    
             if args.simulation_scenario:
                 logging.info(f"Running simulation scenario: {args.simulation_scenario} for model {model}")
 
@@ -178,7 +178,7 @@ def main():
     valid_signs = list(utils.extract_algorithms(all_algorithms))
     valid_levels = list(range(1, 6))
     
-    parser.add_argument("--model", "-m", type=int, nargs="+", default=[2], choices=[1, 2], help="BlockSim model to use (1: Bitcoin, 2: Ethereum)")
+    parser.add_argument("--blockchain-model", "-m", type=int, nargs="+", default=[2], choices=[1, 2], help="BlockSim model to use (1: Bitcoin, 2: Ethereum)")
     parser.add_argument("--algorithm", "-a", help="Input list of digital signature algorithms (space-separated)", type=str, nargs="+", choices=valid_signs)
     parser.add_argument("--levels", "-l", help="Nist levels (space-separated)", type=int, nargs="+", default=valid_levels, choices=valid_levels)
     parser.add_argument("--benchmark", "-b", help="Number of executions", type=utils.positive_int, default=1)

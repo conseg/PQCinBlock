@@ -27,7 +27,7 @@ python main.py --algorithms \
     cross-rsdpg-fast \
     --levels 1 2 3 5 \
     --input-file "$CSV_FILE" \
-    --model 1 2 \
+    --blockchain-model 1 2 \
     --runs-simulator 2 \
     --simulation-scenario 2
 

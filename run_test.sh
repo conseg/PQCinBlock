@@ -7,4 +7,4 @@ python main.py --algorithms \
     --benchmark 3 \
     --warm-up 2 \
     --runs-simulator 2 \
-    --model 1 2
+    --blockchain-model 1 2

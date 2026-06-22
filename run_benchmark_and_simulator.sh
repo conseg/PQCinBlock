@@ -20,6 +20,6 @@ python main.py --algorithms \
     --benchmark 10000 \
     --warm-up 1000 \
     --levels 1 2 3 5 \
-    --model 1 2 \
+    --blockchain-model 1 2 \
     --runs-simulator 1000
 

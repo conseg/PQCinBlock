@@ -108,7 +108,7 @@ deactivate
 | `--benchmark`           | Number of executions of each algorithm. |
 | `--warm-up`        | Number of warm-up runs before the main measurement, for performance stabilization.   |
 | `--levels`         | Defines the NIST security levels (1 to 5) of the algorithms to be tested. Can receive multiple values. |
-| `--model` | Defines the *BlockSim* model to use (1: Bitcoin, 2: Ethereum). Can receive multiple values. |
+| `--blockchain-model` | Defines the *BlockSim* model to use (1: Bitcoin, 2: Ethereum). Can receive multiple values. |
 | `--runs-simulator` | Number of simulation runs in *BlockSim*. |
 | `--simulation-scenario` | Defines the cryptographic artifact sizes simulation scenario (1: digital signature size only ,2: digital signature + public keys sizes, 3: n * digital signatures + 1 * public key)
 
@@ -121,7 +121,7 @@ python main.py --help
 ```
 
 ```text
-usage: main.py [-h] [--model {1,2} [{1,2} ...]]
+usage: main.py [-h] [--blockchain-model {1,2} [{1,2} ...]]
                [--algorithm {cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} [{cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} ...]]
                [--levels {1,2,3,4,5} [{1,2,3,4,5} ...]] [--benchmark BENCHMARK]
                [--warm-up WARM_UP] [--list-algorithm]
@@ -132,7 +132,7 @@ PQCinBlock
 
 options:
   -h, --help            show this help message and exit
-  --model {1,2} [{1,2} ...], -m {1,2} [{1,2} ...]
+  --blockchain-model {1,2} [{1,2} ...], -m {1,2} [{1,2} ...]
                         BlockSim model to use (1: Bitcoin, 2: Ethereum)
                         (default: [2])
  --algorithm {cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} [{cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} ...], -a {cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} [{cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} ...]
@@ -311,13 +311,13 @@ python main.py --algorithm \
     --benchmark 10000 \
     --warm-up 1000 \
     --levels 1 2 3 5 \
-    --model 1 2 \
+    --blockchain-model 1 2 \
     --runs-simulator 1000
 ```
 
 **Setup:**
 
-- Flags used: `--algorithm`, `--benchmark`, `--warm-up`, `--levels`, `--model`, `--runs-simulator`.
+- Flags used: `--algorithm`, `--benchmark`, `--warm-up`, `--levels`, `--blockchain-model`, `--runs-simulator`.
 - Estimated runtime: 10–16 hours depending on the machine used.
 - Results: CSV files and charts in `./results/`.
 
@@ -350,7 +350,7 @@ python main.py --algorithm \
     cross-rsdpg-fast \
     --levels 1 2 3 5 \
     --input-file "$CSV_FILE" \
-    --model 1 2 \
+    --blockchain-model 1 2 \
     --runs-simulator 2 \
     --simulation-scenario 1
 ```
