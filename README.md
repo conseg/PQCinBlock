@@ -132,7 +132,7 @@ PQCinBlock
 
 options:
   -h, --help            show this help message and exit
-  --blockchain-model {1,2} [{1,2} ...], -m {1,2} [{1,2} ...]
+  --blockchain-model {1,2} [{1,2} ...], -bm {1,2} [{1,2} ...]
                         BlockSim model to use (1: Bitcoin, 2: Ethereum)
                         (default: [2])
  --algorithm {cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} [{cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} ...], -a {cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} [{cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} ...]

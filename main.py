@@ -178,11 +178,11 @@ def main():
     valid_signs = list(utils.extract_algorithms(all_algorithms))
     valid_levels = list(range(1, 6))
     
-    parser.add_argument("--blockchain-model", "-m", type=int, nargs="+", default=[2], choices=[1, 2], help="BlockSim model to use (1: Bitcoin, 2: Ethereum)")
+    parser.add_argument("--blockchain-model", "-bm", type=int, nargs="+", default=[2], choices=[1, 2], help="BlockSim model to use (1: Bitcoin, 2: Ethereum)")
     parser.add_argument("--algorithm", "-a", help="Input list of digital signature algorithms (space-separated)", type=str, nargs="+", choices=valid_signs)
     parser.add_argument("--levels", "-l", help="Nist levels (space-separated)", type=int, nargs="+", default=valid_levels, choices=valid_levels)
-    parser.add_argument("--benchmark", "-b", help="Number of executions", type=utils.positive_int, default=1)
-    parser.add_argument("--warm-up", "-wp", help="Number of executions warm up", type=utils.non_negative_int, default=0)
+    parser.add_argument("--benchmark", "-b", help="Number of executions", type=utils.positive_int, default=None)
+    parser.add_argument("--warm-up", "-wp", help="Number of executions warm up", type=utils.non_negative_int, default=None)
     parser.add_argument("--list-algorithm", help="List of variants digital signature algorithms", action="store_true")
     parser.add_argument("--runs-simulator", help="Number of simulator runs", type=utils.non_negative_int, default=0)
     parser.add_argument("--input-file", "-i", help="Input CSV file for the simulator to run independently of benchmark.", type=str)
@@ -191,6 +191,16 @@ def main():
     parser.add_argument("--verbosity", "-v", help=help_msg, default=logging.INFO, type=int)
 
     args = parser.parse_args()
+
+    # Benchmark or warm-up require an algorithm (can't be empty)
+    if (args.benchmark is not None or args.warm_up is not None) and not args.algorithm:
+        parser.error("--algorithm must be provided when using --benchmark or --warm-up.")
+
+    # Set default values if --benchmark or --warm-up were not provided
+    if args.benchmark is None:
+        args.benchmark = 1
+    if args.warm_up is None:
+        args.warm_up = 0
 
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     filtered_algorithms = utils.filter_algorithms(all_algorithms, args.algorithm, args.levels)
