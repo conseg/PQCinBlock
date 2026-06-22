@@ -65,7 +65,7 @@ def _run_simulator_only(args, filtered_algorithms, parser, timestamp):
         return
 
     if not filtered_algorithms:
-        logging.error("No algorithms left after filtering. Please check your --sign and --level arguments.")
+        logging.error("No algorithms left after filtering. Please check your --algorithm and --level arguments.")
         return
 
     variants_to_keep = [
@@ -79,7 +79,7 @@ def _run_simulator_only(args, filtered_algorithms, parser, timestamp):
     missing_variants = sign_variants_set - variants_in_file
 
     if missing_variants:
-        logging.warning("\nWarning: The following algorithms from --sign were not found in the input CSV and will be ignored:")
+        logging.warning("\nWarning: The following algorithms from --algorithms were not found in the input CSV and will be ignored:")
         for variant in sorted(list(missing_variants)):
             logging.info(f"\t- {variant}")
 
@@ -109,7 +109,7 @@ def _run_simulator_only(args, filtered_algorithms, parser, timestamp):
 
 
 def _run_benchmark(results_dir, args, filtered_algorithms):
-    """Handles the logic when the script is run with --sign arguments."""
+    """Handles the logic when the script is run with --algorithms arguments."""
 
     logging.info(Fore.BLUE)
     logging.info("+-----------------+") 
@@ -123,7 +123,7 @@ def _run_benchmark(results_dir, args, filtered_algorithms):
         levels=args.levels,
         variants_by_module=filtered_algorithms,
         evaluation_function=evaluation_function,
-        runs=args.runs,
+        runs=args.benchmark,
         warm_up=args.warm_up
     )
 
@@ -179,11 +179,11 @@ def main():
     valid_levels = list(range(1, 6))
     
     parser.add_argument("--model", "-m", type=int, nargs="+", default=[2], choices=[1, 2], help="BlockSim model to use (1: Bitcoin, 2: Ethereum)")
-    parser.add_argument("--sign", "-s", help="Input list of digital signature algorithms (space-separated)", type=str, nargs="+", choices=valid_signs)
+    parser.add_argument("--algorithm", "-a", help="Input list of digital signature algorithms (space-separated)", type=str, nargs="+", choices=valid_signs)
     parser.add_argument("--levels", "-l", help="Nist levels (space-separated)", type=int, nargs="+", default=valid_levels, choices=valid_levels)
-    parser.add_argument("--runs", "-r", help="Number of executions", type=utils.positive_int, default=1)
+    parser.add_argument("--benchmark", "-b", help="Number of executions", type=utils.positive_int, default=1)
     parser.add_argument("--warm-up", "-wp", help="Number of executions warm up", type=utils.non_negative_int, default=0)
-    parser.add_argument("--list-sign", help="List of variants digital signature algorithms", action="store_true")
+    parser.add_argument("--list-algorithm", help="List of variants digital signature algorithms", action="store_true")
     parser.add_argument("--runs-simulator", help="Number of simulator runs", type=utils.non_negative_int, default=0)
     parser.add_argument("--input-file", "-i", help="Input CSV file for the simulator to run independently of benchmark.", type=str)
     parser.add_argument("--simulation-scenario", "-sc", help="Choose a simulation scenario.", type=int, default= 2, choices=[1, 2, 3])
@@ -193,7 +193,7 @@ def main():
     args = parser.parse_args()
 
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    filtered_algorithms = utils.filter_algorithms(all_algorithms, args.sign, args.levels)
+    filtered_algorithms = utils.filter_algorithms(all_algorithms, args.algorithm, args.levels)
 
     results_dir = save.create_results_directory(timestamp, filtered_algorithms, args.levels)
     logging_filename = Path(results_dir) / f'log_{timestamp}.log'
@@ -214,14 +214,14 @@ def main():
 
     _print_all_settings(args)
 
-    if args.list_sign:
+    if args.list_algorithm:
         sign.print_by_variants(filtered_algorithms)        
     elif args.input_file:
         if not args.runs_simulator:
             parser.error("--runs-simulator must be provided with --input-file.")
         else:
             _run_simulator_only(args, filtered_algorithms, parser, timestamp)
-    elif args.sign:
+    elif args.algorithm:
         path_csv = _run_benchmark(results_dir, args, filtered_algorithms)
         _run_simulator(args, filtered_algorithms, results_dir, path_csv)
     else:

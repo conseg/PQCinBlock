@@ -1,6 +1,6 @@
 #!/bin/bash
 
-python main.py --sign \
+python main.py --algorithms \
     ecdsa \
     mldsa \
     dilithium \
@@ -17,7 +17,7 @@ python main.py --sign \
     cross-rsdpg-balanced \
     cross-rsdp-fast \
     cross-rsdpg-fast \
-    --runs 10000 \
+    --benchmark 10000 \
     --warm-up 1000 \
     --levels 1 2 3 5 \
     --model 1 2 \
