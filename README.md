@@ -103,9 +103,9 @@ deactivate
 | Arguments          | Description                                          |
 | ------------------ | ---------------------------------------------------- |
 | `--help`           | Shows the help message with the description of all available arguments and usage instructions. |
-| `--list-sign`      | Displays all available signature algorithms in the tool. |
-| `--sign`           | List of digital signature algorithms to evaluate. Supports multiple values, including classical algorithms (e.g., ECDSA) and post-quantum ones (e.g., ML-DSA, Dilithium, Falcon, SPHINCS+). |
-| `--runs`           | Number of executions of each algorithm. |
+| `--list-algorithm`      | Displays all available signature algorithms in the tool. |
+| `--algorithm`           | List of digital signature algorithms to evaluate. Supports multiple values, including classical algorithms (e.g., ECDSA) and post-quantum ones (e.g., ML-DSA, Dilithium, Falcon, SPHINCS+). |
+| `--benchmark`           | Number of executions of each algorithm. |
 | `--warm-up`        | Number of warm-up runs before the main measurement, for performance stabilization.   |
 | `--levels`         | Defines the NIST security levels (1 to 5) of the algorithms to be tested. Can receive multiple values. |
 | `--model` | Defines the *BlockSim* model to use (1: Bitcoin, 2: Ethereum). Can receive multiple values. |
@@ -122,9 +122,9 @@ python main.py --help
 
 ```text
 usage: main.py [-h] [--model {1,2} [{1,2} ...]]
-               [--sign {cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} [{cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} ...]]
-               [--levels {1,2,3,4,5} [{1,2,3,4,5} ...]] [--runs RUNS]
-               [--warm-up WARM_UP] [--list-sign]
+               [--algorithm {cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} [{cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} ...]]
+               [--levels {1,2,3,4,5} [{1,2,3,4,5} ...]] [--benchmark BENCHMARK]
+               [--warm-up WARM_UP] [--list-algorithm]
                [--runs-simulator RUNS_SIMULATOR] [--input-file INPUT_FILE]
                [--verbosity VERBOSITY]
 
@@ -135,16 +135,16 @@ options:
   --model {1,2} [{1,2} ...], -m {1,2} [{1,2} ...]
                         BlockSim model to use (1: Bitcoin, 2: Ethereum)
                         (default: [2])
-  --sign {cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} [{cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} ...], -s {cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} [{cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} ...]
+ --algorithm {cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} [{cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} ...], -a {cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} [{cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} ...]
                         Input list of digital signature algorithms (space-
                         separated) (default: None)
   --levels {1,2,3,4,5} [{1,2,3,4,5} ...], -l {1,2,3,4,5} [{1,2,3,4,5} ...]
                         Nist levels (space-separated) (default: [1, 2, 3, 4,
                         5])
-  --runs RUNS, -r RUNS  Number of executions (default: 1)
+  --benchmark BENCHMARK, -b BENCHMARK  Number of executions (default: 1)
   --warm-up WARM_UP, -wp WARM_UP
                         Number of executions warm up (default: 0)
-  --list-sign           List of variants digital signature algorithms
+  --list-algorithm           List of variants digital signature algorithms
                         (default: False)
   --runs-simulator RUNS_SIMULATOR
                         Number of simulator runs (default: 0)
@@ -161,36 +161,36 @@ options:
 
 Show all available digital signature algorithms:
 ```bash
-python main.py --list-sign
+python main.py --list-algorithm
 ```
 
 Filter by specific NIST security levels:
 ```bash
-python main.py --list-sign --levels <nist_levels>
+python main.py --list-algorithm --levels <nist_levels>
 ```
 
 **Example:**
 ```bash
-python main.py --list-sign --levels 1 3 5
+python main.py --list-algorithm --levels 1 3 5
 ```
 
 ### Running Algorithm Benchmarks
 
 Run performance tests (sign, verify) for desired algorithms:
 ```bash
-python main.py --sign <algorithms> --runs <n> --warm-up <n> --levels <nist_levels>
+python main.py --algorithm <algorithms> --benchmark <n> --warm-up <n> --levels <nist_levels>
 ```
 
 **Example**
 ```bash
-python main.py --sign ecdsa mldsa falcon sphincs-sha-s sphincs-shake-f --runs 5 --warm-up 5 --levels 3 5
+python main.py --algorithm ecdsa mldsa falcon sphincs-sha-s sphincs-shake-f --benchmark 5 --warm-up 5 --levels 3 5
 ```
 
 ### Running Blockchain Simulations
 
 Use `--runs-simulator` to define how many times each variant will be executed in the simulator:
 ```bash
-python main.py --sign ecdsa mldsa falcon sphincs-sha-s sphincs-shake-f --runs 5 --warm-up 5 --levels 1 3 5 --runs-simulator 5
+python main.py --algorithm ecdsa mldsa falcon sphincs-sha-s sphincs-shake-f --benchmark 5 --warm-up 5 --levels 1 3 5 --runs-simulator 5
 ```
 
 ## Adding New Algorithms
@@ -291,7 +291,7 @@ source venv/bin/activate
 
 Use the `run_benchmark_and_simulator.sh` scrip or the following command:
 ```bash
-python main.py --sign \
+python main.py --algorithm \
     ecdsa \
     mldsa \
     dilithium \
@@ -308,7 +308,7 @@ python main.py --sign \
     cross-rsdpg-balanced \
     cross-rsdp-fast \
     cross-rsdpg-fast \
-    --runs 10000 \
+    --benchmark 10000 \
     --warm-up 1000 \
     --levels 1 2 3 5 \
     --model 1 2 \
@@ -317,7 +317,7 @@ python main.py --sign \
 
 **Setup:**
 
-- Flags used: `--sign`, `--runs`, `--warm-up`, `--levels`, `--model`, `--runs-simulator`.
+- Flags used: `--algorithm`, `--benchmark`, `--warm-up`, `--levels`, `--model`, `--runs-simulator`.
 - Estimated runtime: 10–16 hours depending on the machine used.
 - Results: CSV files and charts in `./results/`.
 
@@ -331,7 +331,7 @@ Run a benchmark using the `run_benchmark_only.sh` script, and then use the `run_
 
 CSV_FILE="$1"
 
-python main.py --sign \
+python main.py --algorithm \
     ecdsa \
     mldsa \
     dilithium \
@@ -355,7 +355,7 @@ python main.py --sign \
     --simulation-scenario 1
 ```
 **Notes**
-- Estimated runtime: ~4 hours to benchmar and ~16 hours to each simulation (based on the storage evaluation desktop machine).
+- Estimated runtime: ~4 hours to benchmark and ~16 hours to each simulation (based on the storage evaluation desktop machine).
 - Results: CSV files and charts in `./results/`.
 
 ## License
