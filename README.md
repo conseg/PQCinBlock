@@ -131,7 +131,7 @@ usage: main.py [-h] [--blockchain-model {1,2} [{1,2} ...]]
 PQCinBlock
 
 options:
-  -h, --help            show this help message and exit
+  -h, --help            show this help message and exit 
   --blockchain-model {1,2} [{1,2} ...], -bm {1,2} [{1,2} ...]
                         BlockSim model to use (1: Bitcoin, 2: Ethereum)
                         (default: [2])
