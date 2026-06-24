@@ -134,8 +134,6 @@ def _run_simulator(args, filtered_algorithms, results_dir, path_csv):
         logging.info("  SIMULATION      ")
         logging.info("+-----------------+") 
 
-        # CORREÇÃO: Gerar os gráficos DENTRO do loop por modelo, 
-        # evitando que o último modelo sobrescreva os dados e gráficos do anterior.
         for model in args.blockchain_model:                    
             if args.simulation_scenario:
                 logging.info(f"Running simulation scenario: {args.simulation_scenario} for model {model}")
@@ -149,7 +147,6 @@ def _run_simulator(args, filtered_algorithms, results_dir, path_csv):
                 simulation_scenario=args.simulation_scenario
             )
 
-            # O gerador de gráficos precisa rodar para cada arquivo de simulação gerado
             graph.generate_simulator_graphs (
                 results_dir=results_dir,
                 path_csv_simulator=path_csv_simulator,
@@ -184,7 +181,7 @@ def main():
 
     args = parser.parse_args()
 
-    # Validações de consistência de argumentos
+
     if (args.benchmark is not None or args.warm_up is not None) and not args.algorithm:
         parser.error("--algorithm must be provided when using --benchmark or --warm-up.")
 
@@ -200,7 +197,6 @@ def main():
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     filtered_algorithms = utils.filter_algorithms(all_algorithms, args.algorithm, args.levels)
 
-    # CORREÇÃO: Garante que os parâmetros de criação do diretório batem com a assinatura padrão
     results_dir = save.create_results_directory(
         timestamp=timestamp, 
         algorithms_dict=filtered_algorithms, 
@@ -223,7 +219,7 @@ def main():
 
     _print_all_settings(args)
 
-    # Direcionamento do fluxo principal
+
     if args.list_algorithm:
         sign.print_by_variants(filtered_algorithms)        
     elif args.input_file:
