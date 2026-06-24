@@ -49,8 +49,8 @@ def _export_input_and_system_info(args, results_dir):
         filename=Path(results_dir) / "input-and-system-info.json"
     )
 
-def _run_simulator_only(args, filtered_algorithms, parser, timestamp):
-
+def _run_simulator_only(args, filtered_algorithms, results_dir):
+    """Handles logic when running the simulator standalone with an input CSV."""
     try:
         input_path = Path(args.input_file)
         if not input_path.is_file():
@@ -85,19 +85,6 @@ def _run_simulator_only(args, filtered_algorithms, parser, timestamp):
 
     df_filtered = df[df[VARIANT_COLUMN].isin(variants_to_keep)]
 
-    levels_present = {
-        level
-        for module_algos in filtered_algorithms.values()
-        for algo_variants in module_algos.values()
-        for level in algo_variants.keys()
-    }
-
-    results_dir = save.create_results_directory(
-        algorithms_dict=filtered_algorithms,
-        levels=sorted(list(levels_present)),
-        timestamp=timestamp
-    )
-
     _export_input_and_system_info(args, results_dir)
 
     dir_results_path = Path(results_dir)
@@ -105,6 +92,7 @@ def _run_simulator_only(args, filtered_algorithms, parser, timestamp):
     df_filtered.to_csv(filtered_csv_path, index=False)
     logging.info(f"Filtered data saved to: {filtered_csv_path}")
 
+    # Reutiliza a função de simulação padrão usando a pasta unificada
     _run_simulator(args, filtered_algorithms, results_dir, path_csv=filtered_csv_path)
 
 
@@ -138,7 +126,6 @@ def _run_benchmark(results_dir, args, filtered_algorithms):
     return path_csv_benchmark
 
 def _run_simulator(args, filtered_algorithms, results_dir, path_csv):
-
     logging.info(Fore.GREEN)
 
     simulator_was_run = args.simulation > 0
@@ -147,6 +134,8 @@ def _run_simulator(args, filtered_algorithms, results_dir, path_csv):
         logging.info("  SIMULATION      ")
         logging.info("+-----------------+") 
 
+        # CORREÇÃO: Gerar os gráficos DENTRO do loop por modelo, 
+        # evitando que o último modelo sobrescreva os dados e gráficos do anterior.
         for model in args.blockchain_model:                    
             if args.simulation_scenario:
                 logging.info(f"Running simulation scenario: {args.simulation_scenario} for model {model}")
@@ -160,15 +149,18 @@ def _run_simulator(args, filtered_algorithms, results_dir, path_csv):
                 simulation_scenario=args.simulation_scenario
             )
 
-        graph.generate_simulator_graphs (
-            results_dir=results_dir,
-            path_csv_simulator=path_csv_simulator,
-            mechanisms_dict=_get_combined_mechanisms(filtered_algorithms),
-            simulator_was_run=simulator_was_run
-        )
+            # O gerador de gráficos precisa rodar para cada arquivo de simulação gerado
+            graph.generate_simulator_graphs (
+                results_dir=results_dir,
+                path_csv_simulator=path_csv_simulator,
+                mechanisms_dict=_get_combined_mechanisms(filtered_algorithms),
+                simulator_was_run=simulator_was_run
+            )
 
 def main():
     """Main function to parse arguments and dispatch tasks."""
+    init(autoreset=True) # Inicializa colorama corretamente
+    
     parser = argparse.ArgumentParser(
         description="PQCinBlock",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
@@ -186,15 +178,18 @@ def main():
     parser.add_argument("--list-algorithm", help="List of variants digital signature algorithms", action="store_true")
     parser.add_argument("--simulation", help="Number of simulator runs", type=utils.non_negative_int, default=0)
     parser.add_argument("--input-file", "-i", help="Input CSV file for the simulator to run independently of benchmark.", type=str)
-    parser.add_argument("--simulation-scenario", "-sc", help="Choose a simulation scenario.", type=int, default= 2, choices=[1, 2, 3])
+    parser.add_argument("--simulation-scenario", "-sc", help="Choose a simulation scenario.", type=int, default=2, choices=[1, 2, 3])
     help_msg = "verbosity logging level (INFO=%d DEBUG=%d)" % (logging.INFO, logging.DEBUG)
     parser.add_argument("--verbosity", "-v", help=help_msg, default=logging.INFO, type=int)
 
     args = parser.parse_args()
 
-    # Benchmark or warm-up require an algorithm (can't be empty)
+    # Validações de consistência de argumentos
     if (args.benchmark is not None or args.warm_up is not None) and not args.algorithm:
         parser.error("--algorithm must be provided when using --benchmark or --warm-up.")
+
+    if args.input_file and not args.simulation:
+        parser.error("--simulation deve ser maior que 0 quando --input-file é fornecido.")
 
     # Set default values if --benchmark or --warm-up were not provided
     if args.benchmark is None:
@@ -205,15 +200,19 @@ def main():
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
     filtered_algorithms = utils.filter_algorithms(all_algorithms, args.algorithm, args.levels)
 
-    results_dir = save.create_results_directory(timestamp, filtered_algorithms, args.levels)
+    # CORREÇÃO: Garante que os parâmetros de criação do diretório batem com a assinatura padrão
+    results_dir = save.create_results_directory(
+        timestamp=timestamp, 
+        algorithms_dict=filtered_algorithms, 
+        levels=args.levels
+    )
+    
     logging_filename = Path(results_dir) / f'log_{timestamp}.log'
-
     logging_format = '%(asctime)s\t---\t%(message)s'
 
     if args.verbosity == logging.DEBUG:
         logging_format = '%(asctime)s\t---\t%(levelname)s {%(module)s} [%(funcName)s] %(message)s'     
 
-    # formatter = logging.Formatter(logging_format, datefmt=TIME_FORMAT, level=args.verbosity)
     logging.basicConfig(format=logging_format, level=args.verbosity)
 
     # Add file rotating handler, with level DEBUG
@@ -224,13 +223,11 @@ def main():
 
     _print_all_settings(args)
 
+    # Direcionamento do fluxo principal
     if args.list_algorithm:
         sign.print_by_variants(filtered_algorithms)        
     elif args.input_file:
-        if not args.simulation:
-            parser.error("--simulation must be provided with --input-file.")
-        else:
-            _run_simulator_only(args, filtered_algorithms, parser, timestamp)
+        _run_simulator_only(args, filtered_algorithms, results_dir)
     elif args.algorithm:
         path_csv = _run_benchmark(results_dir, args, filtered_algorithms)
         _run_simulator(args, filtered_algorithms, results_dir, path_csv)
