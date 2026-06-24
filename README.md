@@ -109,7 +109,7 @@ deactivate
 | `--warm-up`        | Number of warm-up runs before the main measurement, for performance stabilization.   |
 | `--levels`         | Defines the NIST security levels (1 to 5) of the algorithms to be tested. Can receive multiple values. |
 | `--blockchain-model` | Defines the *BlockSim* model to use (1: Bitcoin, 2: Ethereum). Can receive multiple values. |
-| `--runs-simulator` | Number of simulation runs in *BlockSim*. |
+| `--simulation` | Number of simulation runs in *BlockSim*. |
 | `--simulation-scenario` | Defines the cryptographic artifact sizes simulation scenario (1: digital signature size only ,2: digital signature + public keys sizes, 3: n * digital signatures + 1 * public key)
 
 
@@ -188,9 +188,9 @@ python main.py --algorithm ecdsa mldsa falcon sphincs-sha-s sphincs-shake-f --be
 
 ### Running Blockchain Simulations
 
-Use `--runs-simulator` to define how many times each variant will be executed in the simulator:
+Use `--simulation` to define how many times each variant will be executed in the simulator:
 ```bash
-python main.py --algorithm ecdsa mldsa falcon sphincs-sha-s sphincs-shake-f --benchmark 5 --warm-up 5 --levels 1 3 5 --runs-simulator 5
+python main.py --algorithm ecdsa mldsa falcon sphincs-sha-s sphincs-shake-f --benchmark 5 --warm-up 5 --levels 1 3 5 --simulation 5
 ```
 
 ## Adding New Algorithms
@@ -312,12 +312,12 @@ python main.py --algorithm \
     --warm-up 1000 \
     --levels 1 2 3 5 \
     --blockchain-model 1 2 \
-    --runs-simulator 1000
+    --simulation 1000
 ```
 
 **Setup:**
 
-- Flags used: `--algorithm`, `--benchmark`, `--warm-up`, `--levels`, `--blockchain-model`, `--runs-simulator`.
+- Flags used: `--algorithm`, `--benchmark`, `--warm-up`, `--levels`, `--blockchain-model`, `--simulation`.
 - Estimated runtime: 10–16 hours depending on the machine used.
 - Results: CSV files and charts in `./results/`.
 
@@ -351,7 +351,7 @@ python main.py --algorithm \
     --levels 1 2 3 5 \
     --input-file "$CSV_FILE" \
     --blockchain-model 1 2 \
-    --runs-simulator 2 \
+    --simulation 2 \
     --simulation-scenario 1
 ```
 **Notes**
