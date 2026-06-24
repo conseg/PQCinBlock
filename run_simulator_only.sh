@@ -28,4 +28,4 @@ python main.py --algorithms \
     --levels 1 2 3 5 \
     --input-file "$CSV_FILE" \
     --blockchain-model 1 2 \
-    --runs-simulator 1000
+    --simulation 1000

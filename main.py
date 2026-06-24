@@ -141,7 +141,7 @@ def _run_simulator(args, filtered_algorithms, results_dir, path_csv):
 
     logging.info(Fore.GREEN)
 
-    simulator_was_run = args.runs_simulator > 0
+    simulator_was_run = args.simulation > 0
     if simulator_was_run:       
         logging.info("+-----------------+") 
         logging.info("  SIMULATION      ")
@@ -155,7 +155,7 @@ def _run_simulator(args, filtered_algorithms, results_dir, path_csv):
                 results_dir=results_dir,
                 model=model,
                 input_file=path_csv,
-                runs=args.runs_simulator,
+                runs=args.simulation,
                 variants_by_module=filtered_algorithms,
                 simulation_scenario=args.simulation_scenario
             )
@@ -184,7 +184,7 @@ def main():
     parser.add_argument("--benchmark", "-b", help="Number of executions", type=utils.positive_int, default=None)
     parser.add_argument("--warm-up", "-wp", help="Number of executions warm up", type=utils.non_negative_int, default=None)
     parser.add_argument("--list-algorithm", help="List of variants digital signature algorithms", action="store_true")
-    parser.add_argument("--runs-simulator", help="Number of simulator runs", type=utils.non_negative_int, default=0)
+    parser.add_argument("--simulation", help="Number of simulator runs", type=utils.non_negative_int, default=0)
     parser.add_argument("--input-file", "-i", help="Input CSV file for the simulator to run independently of benchmark.", type=str)
     parser.add_argument("--simulation-scenario", "-sc", help="Choose a simulation scenario.", type=int, default= 2, choices=[1, 2, 3])
     help_msg = "verbosity logging level (INFO=%d DEBUG=%d)" % (logging.INFO, logging.DEBUG)
@@ -227,8 +227,8 @@ def main():
     if args.list_algorithm:
         sign.print_by_variants(filtered_algorithms)        
     elif args.input_file:
-        if not args.runs_simulator:
-            parser.error("--runs-simulator must be provided with --input-file.")
+        if not args.simulation:
+            parser.error("--simulation must be provided with --input-file.")
         else:
             _run_simulator_only(args, filtered_algorithms, parser, timestamp)
     elif args.algorithm:

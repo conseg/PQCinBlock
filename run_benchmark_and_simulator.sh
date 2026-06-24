@@ -21,5 +21,5 @@ python main.py --algorithms \
     --warm-up 1000 \
     --levels 1 2 3 5 \
     --blockchain-model 1 2 \
-    --runs-simulator 1000
+    --simulation 1000
 

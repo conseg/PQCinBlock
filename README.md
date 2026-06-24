@@ -125,7 +125,7 @@ usage: main.py [-h] [--blockchain-model {1,2} [{1,2} ...]]
                [--algorithm {cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} [{cross-rsdpg-small,sphincs-shake-s,cross-rsdp-small,cross-rsdpg-fast,cross-rsdpg-balanced,ecdsa,cross-rsdp-fast,falcon,falcon-padded,mldsa,sphincs-shake-f,dilithium,mayo,cross-rsdp-balanced,sphincs-sha-f,sphincs-sha-s} ...]]
                [--levels {1,2,3,4,5} [{1,2,3,4,5} ...]] [--benchmark BENCHMARK]
                [--warm-up WARM_UP] [--list-algorithm]
-               [--runs-simulator RUNS_SIMULATOR] [--input-file INPUT_FILE]
+               [--simulation SIMULATION] [--input-file INPUT_FILE]
                [--verbosity VERBOSITY]
 
 PQCinBlock
@@ -146,7 +146,7 @@ options:
                         Number of executions warm up (default: 0)
   --list-algorithm           List of variants digital signature algorithms
                         (default: False)
-  --runs-simulator RUNS_SIMULATOR
+  --simulation SIMULATION
                         Number of simulator runs (default: 0)
   --input-file INPUT_FILE, -i INPUT_FILE
                         Input CSV file for the simulator to run independently

@@ -6,5 +6,5 @@ python main.py --algorithms \
     --levels 3 5 \
     --benchmark 3 \
     --warm-up 2 \
-    --runs-simulator 2 \
+    --simulation 2 \
     --blockchain-model 1 2
