@@ -5,7 +5,8 @@ import matplotlib.ticker as ticker
 import seaborn as sns
 import pandas as pd
 import logging
-# Internal import 
+
+
 from visualization import utils
 
 def plot_horizontal(
@@ -152,31 +153,7 @@ def generate_plots_from_csv(
 ):
     """
     Generates bar plots with error bars from a benchmark CSV file.
-
-    For each level defined in `variants_dict`, this function creates a bar plot comparing
-    different variants, including optional error bars, value labels, and legends.
-
-    Args:
-        path_csv (str): Path to the CSV file containing the benchmark data.
-        graphics_directory (str): Directory where the plots will be saved.
-        variants_dict (dict): Dictionary mapping levels to lists of variants.
-        columns (list[tuple]): List of tuples in the form (value_column, error_column, label) 
-            representing the data to plot.
-        show_graph (bool): If True, displays the plots after creation.
-        show_values (bool): If True, displays the numeric values on top of the bars.
-        show_erros (bool): If True, displays the error values above the bars.
-        show_legend (bool): If True, displays the legend on the plot.
-        ylabel (str, optional): Label for the Y-axis. Defaults to "Tempo (ms)".
-        xlabel (str, optional): Label for the X-axis. Defaults to "Algoritmos".
-        yscale (str, optional): Scale for the Y-axis, either "log" or "linear". Defaults to "log".
-        figsize (tuple, optional): Size of the figure in inches. Defaults to (16, 9).
-        save_formats (tuple, optional): File formats to save the plots (e.g., ("pdf", "png")). 
-            Defaults to ("pdf", "png").
-
-    Returns:
-        None
     """
-    
     df = pd.read_csv(path_csv, index_col="variant")
 
     variants_by_level = utils.get_variants_by_level(df, variants_dict)
@@ -184,11 +161,9 @@ def generate_plots_from_csv(
     for level, mechanisms in variants_by_level.items():
 
         variant_to_algorithm = {m["variant"]: m["algorithm"] for m in mechanisms}
-
         variant_names = [m["variant"] for m in mechanisms]
 
         df_subset = df.loc[variant_names]
-
         df_subset["algorithm"] = df_subset.index.map(variant_to_algorithm)
 
         # Check for positive data if log scale is requested for this subset
@@ -211,7 +186,6 @@ def generate_plots_from_csv(
             values_offset=values_offset,
             error_offset=error_offset,
             level=level, 
-            # ylabel=ylabel,
             xlabel=xlabel,
             xlim=xlim,
             xticks=xticks, 
@@ -219,10 +193,145 @@ def generate_plots_from_csv(
             figsize=figsize,
             width=width,
             xscale=effective_xscale,
-            # title=f"Nível {level}",
             show_graph=show_graph,
             show_values=show_values,
             show_errors=show_erros,
             show_legend=show_legend,
             save_formats=save_formats
         )
+
+
+def plot_horizontal_multiple_inverted(
+    dfs,               
+    columns,
+    graphics_directory,
+    values_offset,
+    error_offset,
+    levels=None,        
+    xscale="linear",
+    xlabel=None,
+    xlim=None,
+    xticks=None,
+    yticklabels="operation",  
+    figsize=None,
+    width=0.7,
+    titles=None,       
+    ylabel=None,
+    show_graph=False,
+    show_values=True,
+    show_errors=True,
+    show_legend=True,
+    save_formats=("pdf", "png"),
+    file_name="multiples",
+    pallet_start=0,
+    legend_location="best"
+):
+    """
+    Plota múltiplos gráficos horizontais em uma única figura, um para cada DataFrame da lista.
+    Agora cada barra representa uma operação e os grupos representam os algoritmos.
+    """
+    n_plots = len(dfs)
+    fig, axes = plt.subplots(1, 1, figsize=figsize, squeeze=False)
+    axes = axes.flatten()
+    fontsize = 25
+    
+    for idx, df in enumerate(dfs):
+        algorithms = df['algorithm'].unique()
+        n_algorithms = len(algorithms)
+        n_operations = len(columns)  
+        
+        width_bar = width / n_algorithms
+        y = np.arange(n_operations) 
+        ax = axes[idx]
+        palette = sns.color_palette("muted", n_colors=len(algorithms) + pallet_start)
+        
+        
+        for algo_idx, algorithm in enumerate(algorithms):
+            color = palette[algo_idx + pallet_start]
+            
+    
+            algo_data = df[df['algorithm'] == algorithm]
+            if len(algo_data) == 0:
+                continue
+                
+           
+            values = []
+            errors = []
+            operation_labels = []
+             
+            for i, (val_col, err_col, label) in enumerate(columns):
+                if len(algo_data) > 0:
+                    values.append(algo_data[val_col].iloc[0])
+                    errors.append(algo_data[err_col].iloc[0])
+                    operation_labels.append(label)
+            
+            bars = ax.barh(
+                y + ((n_algorithms - 1 - algo_idx) - (n_algorithms - 1) / 2) * width_bar,
+                values,
+                height=width_bar,
+                xerr=errors if show_errors else None,
+                label=algorithm, 
+                color=color,
+                error_kw={"capsize": 1, "ecolor": "red", "elinewidth": 4}
+            )
+
+            if show_values:
+                for bar, value in zip(bars, values):
+                    if value == 0:
+                        ax.text(
+                            0.1,
+                            bar.get_y() + bar.get_height() / 2,
+                            f"N/A",
+                            va="center",
+                            ha="right",
+                            fontsize=fontsize-5,
+                            color="black",
+                        )
+                    else:
+                        ax.text(
+                            value + values_offset,
+                            bar.get_y() + bar.get_height() / 2,
+                            f"{value:.2f}",
+                            va="center",
+                            ha="left",
+                            fontsize=fontsize-5,
+                            color="black",
+                        )
+
+       
+        ax.set_yticks(y)
+        operation_names = [col[2] for col in columns] 
+        ax.set_yticklabels(operation_names, rotation=90, va="center", fontsize=fontsize)
+
+        if ylabel:
+            ax.set_ylabel(ylabel, fontsize=fontsize)
+        if xlabel:
+            ax.set_xlabel(xlabel, fontsize=fontsize)
+        if titles and idx < len(titles):
+            ax.set_title(titles[idx], fontsize=fontsize)
+
+        ax.set_xscale(xscale)
+        if xscale == "log" and xticks is not None:
+            ax.set_xticks(xticks)
+        if xscale == "linear" and xlim:
+            ax.set_xlim(*xlim)
+        
+        if len(y) > 0:
+            ax.set_ylim(y[0] - 0.5, y[-1] + 0.5)
+        
+        ax.tick_params(axis="y", labelsize=fontsize)
+        ax.tick_params(axis="x", labelsize=fontsize)
+        if show_legend:
+            ax.legend(loc=legend_location, fontsize=fontsize-2)
+        ax.grid(True, axis="x", linestyle="--", linewidth=0.5, alpha=0.7)
+
+    plt.tight_layout()
+    
+    for ext in save_formats:
+        file = f"{graphics_directory}/{file_name}.{ext}"
+        plt.savefig(file, format=ext, bbox_inches='tight')
+        print(f"Saved: {file}")
+
+    if show_graph:
+        plt.show()
+    plt.close()
