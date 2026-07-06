@@ -35,8 +35,8 @@ class InputsConfig:
 
         ''' Simulation Parameters '''
         simTime = 1000  # the simulation length (in seconds)
-        Runs = 100  # Number of simulation runs
-        simulation_scenario = 3  # 1: signature size only, 2: signature + public key size, 3: signature * n + 1 * public key size
+        Runs = 5  # Number of simulation runs
+        simulation_scenario = 1  # 1: signature size only, 2: signature + public key size, 3: signature * n + 1 * public key size
         mean_artifacts_size = 0
         std_artifacts_size = 0
         mean_publicKeySize = 0
@@ -69,8 +69,8 @@ class InputsConfig:
 
         ''' Simulation Parameters '''
         simTime = 10000  # the simulation length (in seconds)
-        Runs = 100  # Number of simulation runs
-        simulation_scenario = 3  # 1: signature size only, 2: signature + public key size, 3: signature * n + 1 * public key size
+        Runs = 5  # Number of simulation runs
+        simulation_scenario = 1  # 1: signature size only, 2: signature + public key size, 3: signature * n + 1 * public key size
         mean_artifacts_size = 0
         std_artifacts_size = 0
         mean_publicKeySize = 0
@@ -114,8 +114,8 @@ class InputsConfig:
 
         ''' Simulation Parameters '''
         simTime = 500  # the simulation length (in seconds)
-        Runs = 100  # Number of simulation runs
-        simulation_scenario = 3  # 1: signature size only, 2: signature + public key size, 3: signature * n + 1 * public key size
+        Runs = 5  # Number of simulation runs
+        simulation_scenario = 1  # 1: signature size only, 2: signature + public key size, 3: signature * n + 1 * public key size
         mean_artifacts_size = 0
         std_artifacts_size = 0
         mean_publicKeySize = 0
@@ -175,8 +175,8 @@ class InputsConfig:
         simTime = 500
 
         # Number of simulation runs
-        Runs = 100
-        simulation_scenario = 3  # 1: signature size only, 2: signature + public key size, 3: signature * n + 1 * public key size
+        Runs = 5
+        simulation_scenario = 1  # 1: signature size only, 2: signature + public key size, 3: signature * n + 1 * public key size
         mean_artifacts_size = 0
         std_artifacts_size = 0
         mean_publicKeySize = 0

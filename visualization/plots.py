@@ -424,3 +424,80 @@ def plot_horizontal_multiple_inverted(
     if show_graph:
         plt.show()
     plt.close()
+
+def create_bar_chart(df, level, variants_dict, title, output_filename):
+    # Filter the dataframe for the given variants
+    data = []
+    labels = []
+    for variant, pretty_name in variants_dict.items():
+        row = df[df['variant'] == variant]
+        if not row.empty:
+            pk_size = float(row['mean_publicKeySize'].values[0])
+            pk_std = float(row['std_publicKeySize'].values[0])
+            sig_size = float(row['mean_sigSize'].values[0])
+            sig_std = float(row['std_sigSize'].values[0])
+            data.append((pk_size, pk_std, sig_size, sig_std))
+            labels.append(pretty_name)
+    
+    if not data:
+        print(f"No data for {title}")
+        return
+
+    # Invert the order so the first algorithm appears at the top
+    data.reverse()
+    labels.reverse()
+
+    pk_sizes = [x[0] for x in data]
+    pk_stds = [x[1] for x in data]
+    sig_sizes = [x[2] for x in data]
+    sig_stds = [x[3] for x in data]
+
+    y = np.arange(len(labels))
+    height = 0.4
+
+    fig, ax = plt.subplots(figsize=(12, 8))
+    
+    color_sig = '#4c61cc' # Blueish from image
+    color_ver = '#ff7640' # Orangeish from image
+    
+    # Draw bars (blue on top, orange on bottom to match image style)
+    rects1 = ax.barh(y + height/2, pk_sizes, height, label='Public Key Size', color=color_sig)
+    rects2 = ax.barh(y - height/2, sig_sizes, height, label='Signature Size', color=color_ver)
+
+    ax.set_xlabel('Size in Bytes', fontsize=14)
+    ax.set_title(title, fontsize=16)
+    
+    ax.set_yticks(y)
+    ax.set_yticklabels(labels, fontsize=14)
+    
+    # Use logarithmic scale to make all bars visible
+    ax.set_xscale('log')
+    
+    # Add vertical dotted grid lines
+    ax.xaxis.grid(True, linestyle=':', which='major', color='grey', alpha=0.7)
+    ax.set_axisbelow(True)
+
+    ax.legend(fontsize=12, loc='upper right')
+    
+    # Add values at the end of bars
+    for i in range(len(y)):
+        pk_val = pk_sizes[i]
+        pk_text = f"{int(pk_val)}"
+        
+        ax.annotate(pk_text, (pk_val, y[i] + height/2),
+                    ha='left', va='center', xytext=(8, 0), textcoords='offset points', fontsize=11)
+        
+        sig_val = sig_sizes[i]
+        sig_text = f"{int(sig_val)}"
+        
+        ax.annotate(sig_text, (sig_val, y[i] - height/2),
+                    ha='left', va='center', xytext=(8, 0), textcoords='offset points', fontsize=11)
+
+    # Adjust x-limits so text doesn't get cut off on the log scale
+    ax.set_xlim(right=ax.get_xlim()[1] * 5)
+
+    plt.tight_layout()
+    plt.savefig(output_filename, format='pdf')
+    plt.close()
+    print(f"Saved {output_filename}")
+
