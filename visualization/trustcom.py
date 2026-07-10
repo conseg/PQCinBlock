@@ -11,10 +11,9 @@ def generate_trustcom_plots(
     sign_list
 ):
     """
-    Processa e gera os gráficos para o formato TrustCom.
-    Modo Invertido: Eixo Y = Operações (Keypair, Sign, Verify). Grupos = Algoritmos.
+    Generates TrustCom plots with inverted axes (operations on Y-axis).
     """
-    print("Gerando gráficos TrustCom...")
+    print("Generating TrustCom plots...")
     
     filtered_algorithms = filter_algorithms(all_algorithms, sign_list, levels)
     combined_mechanisms = {}
@@ -44,8 +43,7 @@ def generate_trustcom_plots(
             for s in sign_list:
                 if s not in df_subset["algorithm"].values:
                     new_row = {col: 0.0 for col in df_subset.columns if col != "algorithm"}
-                    new_row["algorithm"] = s
-                    new_row["variant"] = f"N/A-{s}"
+                    new_row = {**new_row, "algorithm": s, "variant": f"N/A-{s}"}
                     new_row_df = pd.DataFrame([new_row]).set_index("variant")
                     df_subset = pd.concat([df_subset, new_row_df])
 

@@ -9,11 +9,11 @@ import math
 from visualization import utils
 
 def _compute_figsize(n_items):
-    """Calcula a altura ideal baseada no número de itens no eixo Y."""
+    """Calculate ideal height based on the number of items on the Y axis."""
     return (16, max(6.0, n_items * 0.7))
 
 def _adaptive_fontsize(n_items, base=24, shrink_factor=0.4, floor=12, ceiling=26):
-    """Calcula um fontsize adaptativo que encolhe suavemente com muitos itens."""
+    """Calculate an adaptive fontsize that shrinks smoothly with many items."""
     fs = base - (n_items * shrink_factor)
     return max(floor, min(ceiling, fs))
 
@@ -271,7 +271,7 @@ def plot_horizontal_multiple_inverted(
             y = np.arange(n_operations)
             palette = sns.color_palette("muted", n_colors=n_algorithms + pallet_start)
 
-            # Para manter largura razoável mesmo com poucos algoritmos
+            # Maintain reasonable width even with few algorithms
             width_bar = max(0.04, min(width_bar, 0.2))
 
             for algo_idx, algorithm in enumerate(algorithms):

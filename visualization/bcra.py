@@ -11,10 +11,9 @@ def generate_bcra_plots(
     sign_list,
 ):
     """
-    Processa e gera os gráficos para o formato BCRA (Comparação Ethereum vs Bitcoin).
-    Agrupa por algoritmo e mostra as barras para Ethereum e Bitcoin.
+    Generates BCRA plots (Ethereum vs Bitcoin grouped by algorithm).
     """
-    print("Gerando gráficos BCRA...")
+    print("Generating BCRA plots...")
     
     filtered_algorithms = filter_algorithms(all_algorithms, sign_list, levels)
     combined_mechanisms = {}
@@ -50,8 +49,7 @@ def generate_bcra_plots(
             for s in sign_list:
                 if s not in df_combined["algorithm"].values:
                     new_row = {col: 0.0 for col in df_combined.columns if col != "algorithm"}
-                    new_row["algorithm"] = s
-                    new_row["variant"] = f"N/A-{s}"
+                    new_row = {**new_row, "algorithm": s, "variant": f"N/A-{s}"}
                     new_row_df = pd.DataFrame([new_row]).set_index("variant")
                     df_combined = pd.concat([df_combined, new_row_df])
              
