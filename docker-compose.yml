@@ -1,0 +1,7 @@
+services:
+  pqcinblock:
+    build: .
+    image: pqcinblock-app
+    # command: bash run_simulator_only.sh
+    volumes:
+      - ./results-paper:/app/results-paper
