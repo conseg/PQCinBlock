@@ -10,8 +10,3 @@ __pycache__/
 # IDE / OS
 .vscode/
 .DS_Store
-
-# Results
-results/
-results-bcra/
-results-paper_new/
