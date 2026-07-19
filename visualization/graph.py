@@ -44,7 +44,7 @@ def generate_graphs(
         show_legend=show_legend, 
     )
 
-def generate_size_graphs(path_csv, results_dir, mechanisms_dict):
+def generate_size_graphs(path_csv, results_dir, mechanisms_dict, simulation=False):
     try:
         df = pd.read_csv(path_csv)
     except FileNotFoundError as e:
@@ -61,8 +61,9 @@ def generate_size_graphs(path_csv, results_dir, mechanisms_dict):
     df_indexed = df.set_index("variant")
     variants_by_level = utils.get_variants_by_level(df_indexed, mechanisms_dict)
     
+    title = ""
+    
     for level, variants in variants_by_level.items():
         variants_dict = {v["variant"]: v["algorithm"] for v in variants}
-        title = f'Public Key and Signature Sizes - Level {level}'
         output_filename = os.path.join(size_graphics_dir, f'sizes_level_{level}.pdf')
-        plots.create_bar_chart(df, level, variants_dict, title, output_filename)
+        plots.create_bar_chart(df, level, variants_dict, title, output_filename, simulation=simulation)

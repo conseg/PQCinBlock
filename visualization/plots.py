@@ -425,7 +425,21 @@ def plot_horizontal_multiple_inverted(
         plt.show()
     plt.close()
 
-def create_bar_chart(df, level, variants_dict, title, output_filename):
+
+def create_bar_chart(df, level, variants_dict, title, output_filename, simulation=False):
+    """
+    Função principal que roteia para o gerador de gráfico correto 
+    com base na flag 'simulation'.
+    """
+    if simulation:
+        _create_simulation_chart(df, variants_dict, title, output_filename)
+    else:
+        _create_benchmark_chart(df, variants_dict, title, output_filename)
+
+def _create_benchmark_chart(df, variants_dict, title, output_filename):
+    """
+    Gera o gráfico comparativo de Public Key e Signature Size.
+    """
     # Filter the dataframe for the given variants
     data = []
     labels = []
@@ -501,3 +515,73 @@ def create_bar_chart(df, level, variants_dict, title, output_filename):
     plt.close()
     print(f"Saved {output_filename}")
 
+def _create_simulation_chart(df, variants_dict, title, output_filename):
+    """
+    Gera o gráfico de simulação dos tamanhos dos artefatos.
+    """
+    data = []
+    labels = []
+    
+    for variant, pretty_name in variants_dict.items():
+        row = df[df['variant'] == variant]
+        if not row.empty:
+            artifact_size = float(row['mean_artifacts_size'].values[0]) / 1024.0 # Converte em KB
+            artifact_std = float(row['std_artifacts_size'].values[0]) / 1024.0
+            
+            data.append((artifact_size, artifact_std))
+            labels.append(pretty_name)
+            
+    if not data:
+        print(f"No data for {title}")
+        return
+
+    # Inverte a ordem para o primeiro algoritmo aparecer no topo
+    data.reverse()
+    labels.reverse()
+
+    art_sizes = [x[0] for x in data]
+    art_stds = [x[1] for x in data]
+
+    y = np.arange(len(labels))
+    height = 0.6  # Altura levemente maior por ser uma barra única por linha
+
+    fig, ax = plt.subplots(figsize=(12, 8))
+    
+    color_art = '#4c61cc' # Azul
+    
+    # Desenha a barra única de artefatos com o desvio padrão
+    rects1 = ax.barh(y, art_sizes, height, xerr=art_stds, label='Artifact Size', color=color_art, capsize=4)
+
+    ax.set_xlabel('Size (KB)', fontsize=14)
+    ax.set_title(title, fontsize=16)
+    
+    ax.set_yticks(y)
+    ax.set_yticklabels(labels, fontsize=14)
+    
+    ax.set_xscale('log')
+    
+    ax.xaxis.grid(True, linestyle=':', which='major', color='grey', alpha=0.7)
+    ax.set_axisbelow(True)
+
+    ax.legend(fontsize=12, loc='upper right')
+    
+    # Adiciona os valores no fim das barras
+    for i in range(len(y)):
+        art_val, art_err = art_sizes[i], art_stds[i]
+                
+        # Formata para exibir duas casas decimais, ex: "1.52 ± 0.03"
+        if art_err > 0:
+            art_text = f"{art_val:.2f} ± {art_err:.2f}"
+        else:
+            art_text = f"{art_val:.2f}"
+        
+        ax.annotate(art_text, (art_val, y[i]),
+                    ha='left', va='center', xytext=(8, 0), textcoords='offset points', fontsize=11)
+
+    # Ajusta o limite X para o texto não ser cortado
+    ax.set_xlim(right=ax.get_xlim()[1] * 5)
+
+    plt.tight_layout()
+    plt.savefig(output_filename, format='pdf')
+    plt.close()
+    print(f"Saved {output_filename} (Artifacts)")
