@@ -1,0 +1,36 @@
+#!/bin/bash
+
+# Check if a CSV path was provided
+if [ -z "$1" ]; then
+    echo "Usage: $0 <path_to_csv>"
+    exit 1
+fi
+
+CSV_FILE="$1"
+
+# Define the algorithm list
+ALGORITHMS=(
+    ecdsa
+    mldsa
+    dilithium
+    falcon
+    falcon-padded
+    mayo
+    sphincs-sha-s
+    sphincs-sha-f
+    sphincs-shake-s
+    sphincs-shake-f
+    cross-rsdp-small
+    cross-rsdpg-small
+    cross-rsdp-balanced
+    cross-rsdpg-balanced
+    cross-rsdp-fast
+    cross-rsdpg-fast
+)
+
+python main.py --algorithm "${ALGORITHMS[@]}" \
+    --levels 1 2 3 5 \
+    --input-file "$CSV_FILE" \
+    --blockchain-model 1 2 \
+    --simulation 100 \
+    --simulation-scenario 2
