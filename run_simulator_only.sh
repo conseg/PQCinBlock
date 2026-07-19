@@ -8,7 +8,7 @@ fi
 
 CSV_FILE="$1"
 
-python main.py --algorithms \
+python main.py --algorithm \
     ecdsa \
     mldsa \
     dilithium \

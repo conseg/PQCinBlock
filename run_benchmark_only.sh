@@ -1,6 +1,6 @@
 #!/bin/bash
 
-python main.py --algorithms \
+python main.py --algorithm \
     ecdsa \
     mldsa \
     dilithium \
