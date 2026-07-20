@@ -1,30 +1,53 @@
-# PQCinBlock
+# PQCinBlock / Título projeto
 
 <!-- [Demo Video](https://youtu.be/CNKmvOyZqm0) -->
 
 **PQCinBlock** is a modular and extensible benchmark tool for evaluating post-quantum digital signature (PQC) algorithms in blockchain environments.
 It allows for the direct measurement of cryptographic operation performance and the impact of cryptographic artifact sizes, as well as realistic blockchain network simulations, through integration with the BlockSim simulator.
 
-## Table of Contents
+## Table of Contents / Estrutura do readme.md
 
-- [Objectives](#objectives)
-- [Tool Structure](#tool-structure)
-- [Directory Structure](#directory-structure)
-- [Requirements](#requirements)
-- [Argument List](#argument-list)
-- [Execution](#execution)
-- [Adding New Algorithms](#adding-new-algorithms)
-- [Reproducing the Experiments Described in the Paper](#reproducing-the-experiments-described-in-the-paper)
-- [License](#license)
+- [Considered Badges / Selos Considerados](#considered-badges--selos-considerados)
+- [Basic Information / Informações básicas](#basic-information--informações-básicas)
+- [Security Concerns / Preocupações com segurança](#security-concerns--preocupações-com-segurança)
+- [Objectives / Objetivos](#objectives--objetivos)
+- [Tool Structure / Estrutura da Ferramenta](#tool-structure--estrutura-da-ferramenta)
+- [Directory Structure / Estrutura de Diretórios](#directory-structure--estrutura-de-diretórios)
+- [Requirements / Dependências](#requirements--dependências)
+- [Installation / Instalação](#installation--instalação)
+- [Minimal Test / Teste mínimo](#minimal-test--teste-mínimo)
+- [Argument List / Lista de Argumentos](#argument-list--lista-de-argumentos)
+- [Execution / Execução](#execution--execução)
+- [Adding New Algorithms / Adicionando Novos Algoritmos](#adding-new-algorithms--adicionando-novos-algoritmos)
+- [Reproducing the Experiments Described in the Paper / Experimentos](#reproducing-the-experiments-described-in-the-paper--experimentos)
+- [License / LICENSE](#license--license)
 
+## Considered Badges / Selos Considerados
 
-## Objectives
+Os autores julgam como considerados no processo de avaliação os selos:
+
+- Artefatos Disponíveis (SeloD)
+- Artefatos Funcionais (SeloF)
+- Artefatos Sustentáveis (SeloS)
+- Experimentos Reprodutíveis (SeloR)
+
+Com base nos códigos e documentação disponibilizados neste e nos repositórios relacionados.
+
+## Basic Information / Informações básicas
+
+The tool consists of Python scripts and uses the `liboqs` library to perform post-quantum cryptographic operations. It requires a Linux or macOS environment (or Docker). Detailed hardware requirements used for the paper's experiments are listed in the **Execution Environment / Ambiente de Execução** subsection, located inside the [Reproducing the Experiments Described in the Paper / Experimentos](#reproducing-the-experiments-described-in-the-paper--experimentos) section.
+
+## Security Concerns / Preocupações com segurança
+
+There are no security risks associated with executing this artifact. It runs locally and performs cryptographic benchmarks and network simulations without requiring special privileges.
+
+## Objectives / Objetivos
 
 - Compare classical algorithms (e.g., ECDSA) and post-quantum algorithms (e.g., ML-DSA, Dilithium, Falcon, SPHINCS+).
 - Allow continuous and modular integration of new algorithms.
 - Simulate the systemic impact of algorithms in blockchain networks.
 
-## Tool Structure
+## Tool Structure / Estrutura da Ferramenta
 
 The tool consists of three main modules, each responsible for a specific part of the evaluation process.
 
@@ -32,7 +55,7 @@ The tool consists of three main modules, each responsible for a specific part of
 2. **`simulator`**: It simulates blockchain networks using collected timing and size data.
 3. **`graph`**: Generates charts from the data of the previous two modules.
 
-### Directory Structure
+### Directory Structure / Estrutura de Diretórios
 ```bash
 PQCinBlock/
 ├── algorithms/           # PQC algorithm implementations (with ALGORITHMS and time_evaluation)
@@ -58,13 +81,13 @@ PQCinBlock/
 ├── Storage_Analysis_Charts.py  # Auxiliary chart generation script tailored to storage analysis
 ```
 
-## Requirements
+## Requirements / Dependências
 
 - [Python 3.11.2+](https://www.python.org/downloads/release/python-3112/)
 - [liboqs](https://github.com/open-quantum-safe/liboqs)
 - [liboqs-python](https://github.com/open-quantum-safe/liboqs-python)
 
-### Installation:
+## Installation / Instalação
 
 Clone this repository:
 ```bash
@@ -84,7 +107,7 @@ Install the requirements:
 
 >It is recommended to use the same version of `liboqs` and `liboqs-python`. By default, we use version `0.12.0`, defined in the variables at the beginning of [install.sh](./install.sh).
 
-#### Virtual Environment
+#### Virtual Environment / Ambiente Virtual
 
 Activate the virtual environment before running PQCinBlock.
 
@@ -98,7 +121,15 @@ Deactivate:
 deactivate
 ```
 
-## Argument List
+## Minimal Test / Teste mínimo
+
+To quickly verify that the tool is installed correctly, you can list the available algorithms:
+```bash
+python main.py --list-algorithm
+```
+*(This command will output the list of supported PQC algorithms and indicates a successful setup).*
+
+## Argument List / Lista de Argumentos
 
 | Arguments          | Description                                          |
 | ------------------ | ---------------------------------------------------- |
@@ -113,7 +144,7 @@ deactivate
 | `--simulation-scenario` | Defines the cryptographic artifact sizes simulation scenario (1: digital signature size only ,2: digital signature + public keys sizes, 3: n * digital signatures + 1 * public key)
 
 
-## Execution
+## Execution / Execução
 
 Check available arguments with:
 ```bash
@@ -157,7 +188,7 @@ options:
 
 ```
 
-### Listing Algorithms and Variants
+### Listing Algorithms and Variants / Listando Algoritmos e Variantes
 
 Show all available digital signature algorithms:
 ```bash
@@ -174,7 +205,7 @@ python main.py --list-algorithm --levels <nist_levels>
 python main.py --list-algorithm --levels 1 3 5
 ```
 
-### Running Algorithm Benchmarks
+### Running Algorithm Benchmarks / Executando Benchmarks de Algoritmos
 
 Run performance tests (sign, verify) for desired algorithms:
 ```bash
@@ -186,14 +217,14 @@ python main.py --algorithm <algorithms> --benchmark <n> --warm-up <n> --levels <
 python main.py --algorithm ecdsa mldsa falcon sphincs-sha-s sphincs-shake-f --benchmark 5 --warm-up 5 --levels 3 5
 ```
 
-### Running Blockchain Simulations
+### Running Blockchain Simulations / Executando Simulações Blockchain
 
 Use `--simulation` to define how many times each variant will be executed in the simulator:
 ```bash
 python main.py --algorithm ecdsa mldsa falcon sphincs-sha-s sphincs-shake-f --benchmark 5 --warm-up 5 --levels 1 3 5 --simulation 5
 ```
 
-## Adding New Algorithms
+## Adding New Algorithms / Adicionando Novos Algoritmos
 
 To add a new algorithm, create a `.py` file in `algorithms/` with the following structure:
 
@@ -224,7 +255,7 @@ def time_evaluation(variant: str, runs: int):
     })
 ```
 
-## Reproducing the Experiments Described in the Paper
+## Reproducing the Experiments Described in the Paper / Experimentos
 
 This section describes the step-by-step process for reproducing the experiments in the paper. The experiments are automated and organized to allow independent validation of the experimental.
 
@@ -232,7 +263,7 @@ This section describes the step-by-step process for reproducing the experiments 
 > Complete results used in the paper are available in [`results-paper`](./results-paper/)
 
 
-### Execution Environment
+### Execution Environment / Ambiente de Execução
 
 The experiments were performed in three hardware configurations:
 
@@ -258,7 +289,7 @@ The experiments were performed in three hardware configurations:
   - 234 GB disk space
 
 
-### Installation and Setup
+### Installation and Setup / Instalação e Configuração
 
 1. Clone this repository:
 ```bash
@@ -281,11 +312,9 @@ chmod +x install.sh
 source venv/bin/activate
 ```
 
-### Evaluating the Impact of Algorithms on Blockchain Simulation
+### Claim #1: Performance / Reivindicação #1
 
 **Goal:** Simulate the impact of algorithms on block verification times in a blockchain network, using BlockSim, for NIST security levels 1, 3, and 5.
-
-#### Performance
 
 **Command:**
 
@@ -321,7 +350,9 @@ python main.py --algorithm \
 - Estimated runtime: 10–16 hours depending on the machine used.
 - Results: CSV files and charts in `./results/`.
 
-#### Storage
+### Claim #2: Storage / Reivindicação #2
+
+**Goal:** Evaluate the impact of cryptographic artifact sizes on storage.
 
 **Command**
 
@@ -358,6 +389,6 @@ python main.py --algorithm \
 - Estimated runtime: ~4 hours to benchmark and ~16 hours to each simulation (based on the storage evaluation desktop machine).
 - Results: CSV files and charts in `./results/`.
 
-## License
+## License / LICENSE
 
 This project is distributed under the MIT license. See [`LICENSE`](./LICENSE) for details.
