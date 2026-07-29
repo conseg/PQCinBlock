@@ -1,4 +1,4 @@
-def simulator_config(model, runs):
+def simulator_config(model, runs, simulation_scenario=2):
 
     return f"""class InputsConfig:
 
@@ -38,6 +38,11 @@ def simulator_config(model, runs):
         ''' Simulation Parameters '''
         simTime = 1000  # the simulation length (in seconds)
         Runs = {runs}  # Number of simulation runs
+        simulation_scenario = {simulation_scenario}  # 1: signature size only, 2: signature + public key size, 3: signature * n + 1 * public key size
+        mean_artifacts_size = 0
+        std_artifacts_size = 0
+        mean_publicKeySize = 0
+        std_publicKeySize = 0
 
     ''' Input configurations for Bitcoin model '''
     if model == 1:
@@ -67,6 +72,11 @@ def simulator_config(model, runs):
         ''' Simulation Parameters '''
         simTime = 10000  # the simulation length (in seconds)
         Runs = {runs}  # Number of simulation runs
+        simulation_scenario = {simulation_scenario}  # 1: signature size only, 2: signature + public key size, 3: signature * n + 1 * public key size
+        mean_artifacts_size = 0
+        std_artifacts_size = 0
+        mean_publicKeySize = 0
+        std_publicKeySize = 0
 
     ''' Input configurations for Ethereum model '''
     if model == 2:
@@ -107,6 +117,11 @@ def simulator_config(model, runs):
         ''' Simulation Parameters '''
         simTime = 500  # the simulation length (in seconds)
         Runs = {runs}  # Number of simulation runs
+        simulation_scenario = {simulation_scenario}  # 1: signature size only, 2: signature + public key size, 3: signature * n + 1 * public key size
+        mean_artifacts_size = 0
+        std_artifacts_size = 0
+        mean_publicKeySize = 0
+        std_publicKeySize = 0
 
         ''' Input configurations for AppendableBlock model '''
     if model == 3:
@@ -163,6 +178,11 @@ def simulator_config(model, runs):
 
         # Number of simulation runs
         Runs = {runs}
+        simulation_scenario = {simulation_scenario}  # 1: signature size only, 2: signature + public key size, 3: signature * n + 1 * public key size
+        mean_artifacts_size = 0
+        std_artifacts_size = 0
+        mean_publicKeySize = 0
+        std_publicKeySize = 0
 
         ''' Verification '''
         # Varify the model implementation at the end of first run

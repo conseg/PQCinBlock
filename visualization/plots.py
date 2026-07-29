@@ -1,12 +1,21 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.ticker as ticker
 import seaborn as sns
 import pandas as pd
 import logging
-# Internal import 
+import math
+
 from visualization import utils
+
+def _compute_figsize(n_items):
+    """Calculate ideal height based on the number of items on the Y axis."""
+    return (16, max(6.0, n_items * 0.7))
+
+def _adaptive_fontsize(n_items, base=24, shrink_factor=0.4, floor=12, ceiling=26):
+    """Calculate an adaptive fontsize that shrinks smoothly with many items."""
+    fs = base - (n_items * shrink_factor)
+    return max(floor, min(ceiling, fs))
 
 def plot_horizontal(
     df_all, 
@@ -33,12 +42,21 @@ def plot_horizontal(
     n_variants = len(df_all)
     n_columns = len(columns)
     
-    width_bar = width / n_columns
+    if figsize is None:
+        figsize = _compute_figsize(n_variants)
 
+    # Adaptive font sizes
+    fs_tick   = _adaptive_fontsize(n_variants, base=26, shrink_factor=0.4, floor=14, ceiling=26)
+    fs_label  = fs_tick + 2
+    fs_title  = fs_label + 6
+    fs_value  = _adaptive_fontsize(n_variants, base=20, shrink_factor=0.3, floor=12, ceiling=20)
+    fs_error  = fs_value - 1
+    fs_legend = _adaptive_fontsize(n_variants, base=20, shrink_factor=0.3, ceiling=22)
+    
+    width_bar = width / n_columns
     y = np.arange(n_variants)
 
     fig, ax = plt.subplots(figsize=figsize)
-
     palette = sns.color_palette("muted", n_colors=n_columns)
 
     for i, (val_col, err_col, label) in enumerate(columns):
@@ -54,80 +72,83 @@ def plot_horizontal(
             xerr=errors if show_errors else None,
             label=label,
             color=palette[i],
-            error_kw={"capsize": 5, "ecolor": "red", "elinewidth": 2}
+            error_kw={"capsize": 3, "ecolor": "red", "elinewidth": 1.5}
         )
 
-        # values
-        if show_values:
-            for bar, value in zip(bars, values):
-                offset = values_offset
-                ax.text(
-                    value * (1 - offset),
-                    bar.get_y() + bar.get_height() / 2,
-                    f"{value:.3f}",    
-                    va="center_baseline",
-                    ha="right",
-                    fontsize=22,
-                    color="black",
-                    fontweight=600,
-                )
+        # Annotate values and errors — positioned AFTER the error bar cap
+        if show_values or show_errors:
+            for bar_idx, bar in enumerate(bars):
+                value = values.iloc[bar_idx] if hasattr(values, 'iloc') else values[bar_idx]
+                error = errors.iloc[bar_idx] if hasattr(errors, 'iloc') else errors[bar_idx]
+                
+                # Check for NaN or Inf before attempting to format
+                if pd.isna(value) or math.isinf(value):
+                    continue
 
-        # error
-        if show_errors:
-            for bar, value, error in zip(bars, values, errors):
-                right = value + error
-                offset = error_offset
+                right_edge = value + (error if (show_errors and not pd.isna(error)) else 0)
+                y_pos = bar.get_y() + bar.get_height() / 2
+
+                parts = []
+                if show_values:
+                    parts.append(f"{value:.3f}")
+                if show_errors and not pd.isna(error):
+                    parts.append(f"±{error:.3f}")
+                label_text = "  ".join(parts)
+
+                if xscale == "log" and right_edge > 0:
+                    x_pos = right_edge * 1.15
+                else:
+                    x_pos = right_edge + 0.5
+
                 ax.text(
-                    right * offset,
-                    bar.get_y() + bar.get_height() / 2,
-                    f"±{error:.3f}",
-                    va="center_baseline",
+                    x_pos,
+                    y_pos,
+                    label_text,
+                    va="center",
                     ha="left",
-                    fontsize=20,
-                    color="red",
+                    fontsize=fs_value,
+                    color="black",
+                    fontweight=500,
                 )
 
     ax.set_yticks(y)
     ax.set_yticklabels(df_all[yticklabels].to_list(), rotation=0, va="center")
 
     if ylabel:
-        ax.set_ylabel(ylabel, fontsize=24)
+        ax.set_ylabel(ylabel, fontsize=fs_label)
     if xlabel:
-        ax.set_xlabel(xlabel, fontsize=24)
+        ax.set_xlabel(xlabel, fontsize=fs_label)
     if title:
-        ax.set_title(title, fontsize=32)
+        ax.set_title(title, fontsize=fs_title)
 
     ax.set_xscale(xscale)
-    
-    if xscale == "log":
+    if xscale == "log" and xticks is not None:
         ax.set_xticks(xticks)
-    
     if xscale == "linear" and xlim:
         ax.set_xlim(*xlim)
 
-    ax.set_ylim(y[0] - 0.5, y[-1] + 0.5)
+    if len(y) > 0:
+        ax.set_ylim(y[0] - 0.5, y[-1] + 0.5)
 
-    ax.tick_params(axis="y", labelsize=28)
-    ax.tick_params(axis="x", labelsize=28)
+    ax.tick_params(axis="y", labelsize=fs_tick)
+    ax.tick_params(axis="x", labelsize=fs_tick)
 
     if show_legend:
-        ax.legend(loc="upper right", fontsize=28)
+        ax.legend(loc="upper right", fontsize=fs_legend)
 
     ax.grid(True, axis="x", linestyle="--", linewidth=0.5, alpha=0.7)
-
     plt.tight_layout()
 
     filename = f"level-{level}" if level else "all_level"
 
     for ext in save_formats:
         file = f"{graphics_directory}/{filename}.{ext}"
-        plt.savefig(file, format=ext)
+        plt.savefig(file, format=ext, bbox_inches='tight')
         logging.info(f"\t{file}")
 
     if show_graph:
         plt.show()
-    else:
-        plt.close()
+    plt.close()
 
 
 def generate_plots_from_csv(
@@ -146,63 +167,29 @@ def generate_plots_from_csv(
     xticks,
     width=0.85,
     xlabel="Average time (ms)",
-    ylabel="Algorithms",
-    figsize=(16, 9),
+    ylabel=None,
+    figsize=None,
     save_formats=["pdf"],
 ):
-    """
-    Generates bar plots with error bars from a benchmark CSV file.
-
-    For each level defined in `variants_dict`, this function creates a bar plot comparing
-    different variants, including optional error bars, value labels, and legends.
-
-    Args:
-        path_csv (str): Path to the CSV file containing the benchmark data.
-        graphics_directory (str): Directory where the plots will be saved.
-        variants_dict (dict): Dictionary mapping levels to lists of variants.
-        columns (list[tuple]): List of tuples in the form (value_column, error_column, label) 
-            representing the data to plot.
-        show_graph (bool): If True, displays the plots after creation.
-        show_values (bool): If True, displays the numeric values on top of the bars.
-        show_erros (bool): If True, displays the error values above the bars.
-        show_legend (bool): If True, displays the legend on the plot.
-        ylabel (str, optional): Label for the Y-axis. Defaults to "Tempo (ms)".
-        xlabel (str, optional): Label for the X-axis. Defaults to "Algoritmos".
-        yscale (str, optional): Scale for the Y-axis, either "log" or "linear". Defaults to "log".
-        figsize (tuple, optional): Size of the figure in inches. Defaults to (16, 9).
-        save_formats (tuple, optional): File formats to save the plots (e.g., ("pdf", "png")). 
-            Defaults to ("pdf", "png").
-
-    Returns:
-        None
-    """
-    
     df = pd.read_csv(path_csv, index_col="variant")
-
     variants_by_level = utils.get_variants_by_level(df, variants_dict)
 
     for level, mechanisms in variants_by_level.items():
-
         variant_to_algorithm = {m["variant"]: m["algorithm"] for m in mechanisms}
-
         variant_names = [m["variant"] for m in mechanisms]
-
-        df_subset = df.loc[variant_names]
-
+        df_subset = df.loc[variant_names].copy()
         df_subset["algorithm"] = df_subset.index.map(variant_to_algorithm)
 
-        # Check for positive data if log scale is requested for this subset
         effective_xscale = xscale
         if xscale == "log":
             has_positive_data = False
             for val_col, _, _ in columns:
-                # Drop NaN values before checking for positive data
                 if val_col in df_subset.columns and (df_subset[val_col].dropna() > 0).any():
                     has_positive_data = True
                     break
             if not has_positive_data:
                 effective_xscale = "linear"
-                logging.warning(f"\nWarning: No positive data for level {level} to plot with log scale. Switching to linear scale.")
+                logging.warning(f"\nWarning: No positive data for level {level} to plot with log scale.")
         
         plot_horizontal(
             df_all=df_subset, 
@@ -211,7 +198,6 @@ def generate_plots_from_csv(
             values_offset=values_offset,
             error_offset=error_offset,
             level=level, 
-            # ylabel=ylabel,
             xlabel=xlabel,
             xlim=xlim,
             xticks=xticks, 
@@ -219,10 +205,299 @@ def generate_plots_from_csv(
             figsize=figsize,
             width=width,
             xscale=effective_xscale,
-            # title=f"Nível {level}",
             show_graph=show_graph,
             show_values=show_values,
             show_errors=show_erros,
             show_legend=show_legend,
             save_formats=save_formats
         )
+
+
+def plot_horizontal_multiple_inverted(
+    dfs,
+    columns,
+    graphics_directory,
+    values_offset,
+    error_offset,
+    levels=None,
+    xscale="linear",
+    xlabel=None,
+    xlim=None,
+    xticks=None,
+    yticklabels="operation",
+    figsize=None,
+    width=0.7,
+    titles=None,
+    ylabel=None,
+    show_graph=False,
+    show_values=True,
+    show_errors=True,
+    show_legend=True,
+    save_formats=("pdf", "png"),
+    file_name="multiples",
+    pallet_start=0,
+    legend_kwargs=None
+):
+    """
+    Plota múltiplos gráficos horizontais em uma única figura.
+    No modo invertido (TrustCom), as barras principais (eixo Y) são as operações (ex: Keypair, Sign, Verify)
+    e os agrupamentos são os algoritmos. No modo padrão (BCRA), o eixo Y são os algoritmos e agrupamentos são redes.
+    """
+    n_plots = len(dfs)
+    
+    if figsize is None:
+        if yticklabels == "operation":
+            algorithms = dfs[0]['algorithm'].unique()
+            n_rows = len(columns) * len(algorithms)
+        else:
+            y_items = dfs[0][yticklabels].unique() if yticklabels in dfs[0].columns else dfs[0].index
+            n_rows = len(y_items) * len(columns)
+        figsize = _compute_figsize(n_rows)
+
+    fig, axes = plt.subplots(1, n_plots, figsize=figsize, squeeze=False)
+    axes = axes.flatten()
+
+    for idx, df in enumerate(dfs):
+        ax = axes[idx]
+        
+        # Decide the grouping logic based on yticklabels
+        if yticklabels == "operation":
+            # TrustCom style: Y-axis is operation, Groups are Algorithms
+            algorithms = df['algorithm'].unique()
+            n_algorithms = len(algorithms)
+            n_operations = len(columns)
+            
+            width_bar = width / n_algorithms
+            y = np.arange(n_operations)
+            palette = sns.color_palette("muted", n_colors=n_algorithms + pallet_start)
+
+            # Maintain reasonable width even with few algorithms
+            width_bar = max(0.04, min(width_bar, 0.2))
+
+            for algo_idx, algorithm in enumerate(algorithms):
+                color = palette[algo_idx + pallet_start]
+                algo_data = df[df['algorithm'] == algorithm]
+                if len(algo_data) == 0:
+                    continue
+
+                values = []
+                errors = []
+                for i, (val_col, err_col, label) in enumerate(columns):
+                    values.append(algo_data[val_col].iloc[0] if len(algo_data) > 0 else 0)
+                    errors.append(algo_data[err_col].iloc[0] if len(algo_data) > 0 else 0)
+
+                bars = ax.barh(
+                    y + ((n_algorithms - 1 - algo_idx) - (n_algorithms - 1) / 2) * width_bar,
+                    values,
+                    height=width_bar,
+                    xerr=errors if show_errors else None,
+                    label=algorithm,
+                    color=color,
+                    error_kw={"capsize": 2, "ecolor": "red", "elinewidth": 1.5}
+                )
+
+                if show_values or show_errors:
+                    for bar_idx, bar in enumerate(bars):
+                        value = values[bar_idx]
+                        error = errors[bar_idx]
+                        if pd.isna(value) or value == 0:
+                            if show_values:
+                                ax.text(
+                                    0.1, bar.get_y() + bar.get_height() / 2, "N/A",
+                                    va="center", ha="left", fontsize=14, color="black"
+                                )
+                            continue
+                        
+                        right_edge = value + (error if show_errors else 0)
+                        
+                        parts = []
+                        if show_values:
+                            parts.append(f"{value:.3f}")
+                        if show_errors:
+                            parts.append(f"±{error:.3f}")
+                        label_text = "  ".join(parts)
+                        
+                        x_pos = right_edge * 1.15 if (xscale == "log" and right_edge > 0) else right_edge + max(0.1, right_edge*0.05)
+                        
+                        ax.text(
+                            x_pos, bar.get_y() + bar.get_height() / 2, label_text,
+                            va="center", ha="left", fontsize=14, color="black"
+                        )
+
+            ax.set_yticks(y)
+            operation_names = [col[2] for col in columns]
+            ax.set_yticklabels(operation_names, rotation=0, va="center", fontsize=18)
+            
+        else:
+            # BCRA style: Y-axis is Algorithm, Groups are columns (e.g. Ethereum vs Bitcoin)
+            y_items = df[yticklabels].unique() if yticklabels in df.columns else df.index
+            n_items = len(y_items)
+            n_columns = len(columns)
+            
+            width_bar = width / n_columns
+            y = np.arange(n_items)
+            palette = sns.color_palette("muted", n_colors=n_columns + pallet_start)
+
+            width_bar = max(0.04, min(width_bar, 0.2))
+
+            for i, (val_col, err_col, label) in enumerate(columns):
+                color = palette[i + pallet_start]
+                values = df[val_col].values
+                errors = df[err_col].values
+
+                reverse_i = n_columns - 1 - i
+                
+                bars = ax.barh(
+                    y + (reverse_i - (n_columns - 1) / 2) * width_bar,
+                    values,
+                    height=width_bar,
+                    xerr=errors if show_errors else None,
+                    label=label,
+                    color=color,
+                    error_kw={"capsize": 2, "ecolor": "red", "elinewidth": 1.5}
+                )
+
+                if show_values or show_errors:
+                    for bar_idx, bar in enumerate(bars):
+                        value = values[bar_idx]
+                        error = errors[bar_idx]
+                        if pd.isna(value) or value == 0:
+                            if show_values:
+                                ax.text(
+                                    0.1, bar.get_y() + bar.get_height() / 2, "N/A",
+                                    va="center", ha="left", fontsize=14, color="black"
+                                )
+                            continue
+                        
+                        right_edge = value + (error if show_errors else 0)
+                        
+                        parts = []
+                        if show_values:
+                            parts.append(f"{value:.3f}")
+                        if show_errors:
+                            parts.append(f"±{error:.3f}")
+                        label_text = "  ".join(parts)
+                        
+                        x_pos = right_edge * 1.15 if (xscale == "log" and right_edge > 0) else right_edge + max(0.1, right_edge*0.05)
+                        
+                        ax.text(
+                            x_pos, bar.get_y() + bar.get_height() / 2, label_text,
+                            va="center", ha="left", fontsize=14, color="black"
+                        )
+
+            ax.set_yticks(y)
+            ax.set_yticklabels(y_items, rotation=0, va="center", fontsize=18)
+
+        if ylabel:
+            ax.set_ylabel(ylabel, fontsize=20)
+        if xlabel:
+            ax.set_xlabel(xlabel, fontsize=20)
+        if titles and idx < len(titles):
+            ax.set_title(titles[idx], fontsize=22)
+
+        ax.set_xscale(xscale)
+        if xscale == "log" and xticks is not None:
+            ax.set_xticks(xticks)
+        if xscale == "linear" and xlim:
+            ax.set_xlim(*xlim)
+
+        if len(y) > 0:
+            ax.set_ylim(y[0] - 0.5, y[-1] + 0.5)
+
+        ax.tick_params(axis="x", labelsize=18)
+        
+        if show_legend:
+            if legend_kwargs:
+                ax.legend(**legend_kwargs)
+            else:
+                ax.legend(loc="upper right", fontsize=16)
+                
+        ax.grid(True, axis="x", linestyle="--", linewidth=0.5, alpha=0.7)
+
+    plt.tight_layout()
+
+    for ext in save_formats:
+        file = f"{graphics_directory}/{file_name}.{ext}"
+        plt.savefig(file, format=ext, bbox_inches='tight')
+        print(f"Saved: {file}")
+
+    if show_graph:
+        plt.show()
+    plt.close()
+
+def create_bar_chart(df, level, variants_dict, title, output_filename):
+    # Filter the dataframe for the given variants
+    data = []
+    labels = []
+    for variant, pretty_name in variants_dict.items():
+        row = df[df['variant'] == variant]
+        if not row.empty:
+            pk_size = float(row['mean_publicKeySize'].values[0])
+            pk_std = float(row['std_publicKeySize'].values[0])
+            sig_size = float(row['mean_sigSize'].values[0])
+            sig_std = float(row['std_sigSize'].values[0])
+            data.append((pk_size, pk_std, sig_size, sig_std))
+            labels.append(pretty_name)
+    
+    if not data:
+        print(f"No data for {title}")
+        return
+
+    # Invert the order so the first algorithm appears at the top
+    data.reverse()
+    labels.reverse()
+
+    pk_sizes = [x[0] for x in data]
+    pk_stds = [x[1] for x in data]
+    sig_sizes = [x[2] for x in data]
+    sig_stds = [x[3] for x in data]
+
+    y = np.arange(len(labels))
+    height = 0.4
+
+    fig, ax = plt.subplots(figsize=(12, 8))
+    
+    color_sig = '#4c61cc' # Blueish from image
+    color_ver = '#ff7640' # Orangeish from image
+    
+    # Draw bars (blue on top, orange on bottom to match image style)
+    rects1 = ax.barh(y + height/2, pk_sizes, height, label='Public Key Size', color=color_sig)
+    rects2 = ax.barh(y - height/2, sig_sizes, height, label='Signature Size', color=color_ver)
+
+    ax.set_xlabel('Size in Bytes', fontsize=14)
+    ax.set_title(title, fontsize=16)
+    
+    ax.set_yticks(y)
+    ax.set_yticklabels(labels, fontsize=14)
+    
+    # Use logarithmic scale to make all bars visible
+    ax.set_xscale('log')
+    
+    # Add vertical dotted grid lines
+    ax.xaxis.grid(True, linestyle=':', which='major', color='grey', alpha=0.7)
+    ax.set_axisbelow(True)
+
+    ax.legend(fontsize=12, loc='upper right')
+    
+    # Add values at the end of bars
+    for i in range(len(y)):
+        pk_val = pk_sizes[i]
+        pk_text = f"{int(pk_val)}"
+        
+        ax.annotate(pk_text, (pk_val, y[i] + height/2),
+                    ha='left', va='center', xytext=(8, 0), textcoords='offset points', fontsize=11)
+        
+        sig_val = sig_sizes[i]
+        sig_text = f"{int(sig_val)}"
+        
+        ax.annotate(sig_text, (sig_val, y[i] - height/2),
+                    ha='left', va='center', xytext=(8, 0), textcoords='offset points', fontsize=11)
+
+    # Adjust x-limits so text doesn't get cut off on the log scale
+    ax.set_xlim(right=ax.get_xlim()[1] * 5)
+
+    plt.tight_layout()
+    plt.savefig(output_filename, format='pdf')
+    plt.close()
+    print(f"Saved {output_filename}")
+

@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# Check if a CSV path was provided
+if [ -z "$1" ]; then
+    echo "Usage: $0 <path_to_csv>"
+    exit 1
+fi
+
+CSV_FILE="$1"
+
 python main.py --algorithms \
     ecdsa \
     mldsa \
@@ -17,9 +25,9 @@ python main.py --algorithms \
     cross-rsdpg-balanced \
     cross-rsdp-fast \
     cross-rsdpg-fast \
-    --benchmark 10000 \
-    --warm-up 1000 \
     --levels 1 2 3 5 \
+    --input-file "$CSV_FILE" \
     --blockchain-model 1 2 \
-    --simulation 1000
+    --simulation 2 \
+    --simulation-scenario 2
 

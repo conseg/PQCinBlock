@@ -8,7 +8,7 @@ fi
 
 CSV_FILE="$1"
 
-python main.py --sign \
+python main.py --algorithms \
     ecdsa \
     mldsa \
     dilithium \
@@ -27,5 +27,5 @@ python main.py --sign \
     cross-rsdpg-fast \
     --levels 1 2 3 5 \
     --input-file "$CSV_FILE" \
-    --model 1 2 \
-    --runs-simulator 1000
+    --blockchain-model 1 2 \
+    --simulation 1000

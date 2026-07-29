@@ -3,7 +3,7 @@ from pathlib import Path
 import logging
 
 import save
-from visualization.graph import generate_graphs
+from visualization.graph import generate_graphs, generate_size_graphs
 
 def generate_benchmark_graphs(results_dir, path_csv_benchmark, mechanisms_dict):
     """
@@ -36,6 +36,12 @@ def generate_benchmark_graphs(results_dir, path_csv_benchmark, mechanisms_dict):
             error_offset=1.05,
             log_xticks=np.logspace(-3, 4, num=8, base=10),
             log_xlim=(1e-3, 1e4),
+        )
+
+        generate_size_graphs(
+            path_csv=str(path_csv_sign),
+            results_dir=str(dir_benchmark),
+            mechanisms_dict=mechanisms_dict
         )
     else:
         logging.warning(f"Warning: Algorithm CSV file not found, skipping algorithm graphs: {path_csv_sign}")

@@ -18,7 +18,7 @@ MODELS[2]="Ethereum"
 CONFIG_PATH="./BlockSim/InputsConfig.py"
 
 
-def simulator(results_dir, model, input_file, runs, variants_by_module):
+def simulator(results_dir, model, input_file, runs, variants_by_module, simulation_scenario=None):
 
     simulator_directory = save.create_simulator_directory(
         root_directory=results_dir
@@ -27,10 +27,10 @@ def simulator(results_dir, model, input_file, runs, variants_by_module):
     output_blocksim = simulator_directory / f"blocksim-model-{model}-{runs}x.csv"
 
     logging.info("")
-    logging.info(f"BlockSim run model {model} ({MODELS[model]})")
+    logging.info(f"BlockSim run model {model} ({MODELS[model]}) - scenario {simulation_scenario}")
         
     with open(CONFIG_PATH, "w", encoding="utf-8") as f:
-        f.write(simulator_config(model, runs))
+        f.write(simulator_config(model, runs, simulation_scenario))
     
     copyfile = simulator_directory / f"InputsConfig{model}.py"
 
