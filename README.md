@@ -128,7 +128,13 @@ deactivate
 
 ### Using Docker / Usando Docker
 
-Make sure you have Docker and Docker Compose installed. Then, from the project root directory, run:
+Make sure you have Docker and Docker Compose installed.
+
+Clone this repository:
+```bash
+git clone https://github.com/conseg/PQCinBlock.git
+cd PQCinBlock
+```
 
 Build the Docker image:
 ```bash
