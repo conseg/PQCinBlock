@@ -65,6 +65,8 @@ PQCinBlock/
 ├── visualization/        # Chart generation from execution results
 ├── venv/                 # Python virtual environment (not versioned)
 ├── benchmark.py          # Signature algorithms benchmarking module
+├── docker-compose.yml    # Docker services configuration
+├── Dockerfile            # Docker image definition
 ├── graph.py              # Auxiliary chart generation script
 ├── info.py               # Auxiliary metadata collector
 ├── install.sh            # Main installation script
@@ -86,8 +88,11 @@ PQCinBlock/
 - [Python 3.11.2+](https://www.python.org/downloads/release/python-3112/)
 - [liboqs](https://github.com/open-quantum-safe/liboqs)
 - [liboqs-python](https://github.com/open-quantum-safe/liboqs-python)
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) *(optional, for containerized execution)*
 
 ## Installation / Instalação
+
+### Native Installation / Instalação Nativa
 
 Clone this repository:
 ```bash
@@ -120,6 +125,28 @@ Deactivate:
 ```bash
 deactivate
 ```
+
+### Using Docker / Usando Docker
+
+Make sure you have Docker and Docker Compose installed. Then, from the project root directory, run:
+
+Build the Docker image:
+```bash
+docker-compose build
+```
+
+To run the tool via Docker, simply prefix any `python main.py` command shown in this documentation with `docker-compose run --rm pqcinblock`.
+
+**Examples:**
+Instead of running: `python main.py --help`
+You run: `docker-compose run --rm pqcinblock python main.py --help`
+
+Or, for a complete benchmark run:
+```bash
+docker-compose run --rm pqcinblock python main.py --algorithm ecdsa mldsa --benchmark 5 --warm-up 5 --levels 3
+```
+
+*(Generated results are persisted in your local folder)*
 
 ## Minimal Test / Teste mínimo
 
