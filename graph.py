@@ -41,7 +41,8 @@ def generate_benchmark_graphs(results_dir, path_csv_benchmark, mechanisms_dict):
         generate_size_graphs(
             path_csv=str(path_csv_sign),
             results_dir=str(dir_benchmark),
-            mechanisms_dict=mechanisms_dict
+            mechanisms_dict=mechanisms_dict,
+            simulation=False
         )
     else:
         logging.warning(f"Warning: Algorithm CSV file not found, skipping algorithm graphs: {path_csv_sign}")
@@ -69,6 +70,14 @@ def generate_simulator_graphs(results_dir, path_csv_simulator, mechanisms_dict, 
             log_xticks=np.logspace(-2, 4, num=7, base=10),
             log_xlim=(1e-2, 1e4),
         )
+        
+        generate_size_graphs(
+            path_csv=str(path_csv),
+            results_dir=str(dir_simulator),
+            mechanisms_dict=mechanisms_dict,
+            simulation=True
+        )   
+        
     else:
         if simulator_was_run:
             logging.warning(f"Warning: Simulator output CSV not found, skipping simulator graphs: {path_csv}")

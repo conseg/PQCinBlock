@@ -8,7 +8,7 @@ fi
 
 CSV_FILE="$1"
 
-# 1. Definindo a lista de algoritmos como um array
+# Define the algorithm list
 ALGORITHMS=(
     ecdsa
     mldsa
@@ -39,7 +39,7 @@ for SCENARIO in {1..3}; do
         --levels 1 2 3 5 \
         --input-file "$CSV_FILE" \
         --blockchain-model 1 2 \
-        --simulation 1000 \
+        --simulation 100 \
         --simulation-scenario "$SCENARIO"
         
 done
