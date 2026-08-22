@@ -5,8 +5,8 @@ import numpy as np
 from time import perf_counter
 
 # Internal imports
-import utils
-import save
+import auxiliaryFiles.utils as utils
+import auxiliaryFiles.save as save
 import logging 
 import sys
 

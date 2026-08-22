@@ -1,7 +1,7 @@
 import pandas as pd
 from visualization.plots import plot_horizontal_multiple_inverted
 from visualization.utils import get_variants_by_level
-from utils import filter_algorithms
+from auxiliaryFiles.utils import filter_algorithms
 
 def generate_trustcom_plots(
     results,

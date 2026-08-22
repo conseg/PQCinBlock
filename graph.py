@@ -2,7 +2,7 @@ import numpy as np
 from pathlib import Path
 import logging
 
-import save
+import auxiliaryFiles.save as save
 from visualization.graph import generate_graphs, generate_size_graphs
 
 def generate_benchmark_graphs(results_dir, path_csv_benchmark, mechanisms_dict):

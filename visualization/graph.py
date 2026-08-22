@@ -3,7 +3,7 @@ import numpy as np
 
 # Internal imports
 from visualization import plots
-import save
+import auxiliaryFiles.save as save
 
 def generate_graphs(
     path_csv,

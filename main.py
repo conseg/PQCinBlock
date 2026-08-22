@@ -5,9 +5,9 @@ from pathlib import Path
 
 # Internal imports
 import benchmark as sign
-import utils
-import save
-import info
+import auxiliaryFiles.utils as utils
+import auxiliaryFiles.save as save
+import auxiliaryFiles.info as info
 import graph
 import sys
 from colorama import init, Fore, Style

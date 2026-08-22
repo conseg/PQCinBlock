@@ -7,9 +7,9 @@ import logging
 import shutil
 
 # Internal imports
-import save
-import utils 
-from simulator_config import simulator_config
+import auxiliaryFiles.save as save
+import auxiliaryFiles.utils as utils 
+from auxiliaryFiles.simulator_config import simulator_config
 
 MODELS={}
 MODELS[1]="Bitcoin"
