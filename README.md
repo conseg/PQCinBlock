@@ -1,9 +1,9 @@
-# PQCinBlock / Título projeto
-
-<!-- [Demo Video](https://youtu.be/CNKmvOyZqm0) -->
+# PQCinBlock
 
 **PQCinBlock** is a modular and extensible benchmark tool for evaluating post-quantum digital signature (PQC) algorithms in blockchain environments.
 It allows for the direct measurement of cryptographic operation performance and the impact of cryptographic artifact sizes, as well as realistic blockchain network simulations, through integration with the BlockSim simulator.
+
+[Demo Video](https://youtu.be/lVWv9Dv7tQk)
 
 ## Table of Contents / Estrutura do readme.md
 
@@ -44,8 +44,8 @@ There are no security risks associated with executing this artifact. It runs loc
 ## Objectives / Objetivos
 
 - Compare classical algorithms (e.g., ECDSA) and post-quantum algorithms (e.g., ML-DSA, Dilithium, Falcon, SPHINCS+).
-- Allow continuous and modular integration of new algorithms.
 - Simulate the systemic impact of algorithms in blockchain networks.
+- Tests on different computing environments.
 
 ## Tool Structure / Estrutura da Ferramenta
 
@@ -60,11 +60,13 @@ The tool consists of three main modules, each responsible for a specific part of
 PQCinBlock/
 ├── algorithms/           # PQC algorithm implementations (with ALGORITHMS and time_evaluation)
 ├── BlockSim/             # Blockchain simulator source code (BlockSim)
-├── results-paper/        # Complete results used in the papers (v1 and v2)
+├── results-paper/        # Complete results used in the papers
 ├── results/              # Execution results in CSV and charts (not versioned)
 ├── visualization/        # Chart generation from execution results
 ├── venv/                 # Python virtual environment (not versioned)
 ├── benchmark.py          # Signature algorithms benchmarking module
+├── docker-compose.yml    # Docker services configuration
+├── Dockerfile            # Docker image definition
 ├── graph.py              # Auxiliary chart generation script
 ├── info.py               # Auxiliary metadata collector
 ├── install.sh            # Main installation script
@@ -83,11 +85,14 @@ PQCinBlock/
 
 ## Requirements / Dependências
 
-- [Python 3.11.2+](https://www.python.org/downloads/release/python-3112/)
+- [Python >= 3.11.2](https://www.python.org/downloads/release/python-3112/) < 3.14.x
 - [liboqs](https://github.com/open-quantum-safe/liboqs)
 - [liboqs-python](https://github.com/open-quantum-safe/liboqs-python)
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) *(optional, for containerized execution)*
 
 ## Installation / Instalação
+
+### Native Installation / Instalação Nativa
 
 Clone this repository:
 ```bash
@@ -120,6 +125,43 @@ Deactivate:
 ```bash
 deactivate
 ```
+
+### Using Docker / Usando Docker
+
+Make sure you have Docker and Docker Compose installed.
+
+Clone this repository:
+```bash
+git clone https://github.com/conseg/PQCinBlock.git
+cd PQCinBlock
+```
+
+Build the Docker image:
+```bash
+docker-compose build
+```
+Alternatively, use the command:
+```bash
+docker compose build
+```
+
+To run the tool via Docker, simply prefix any `python main.py` command shown in this documentation with `docker-compose run --rm pqcinblock`, or `docker compose run --rm pqcinblock`.
+
+**Examples:**
+Instead of running: `python main.py --help`
+You run: `docker-compose run --rm pqcinblock python main.py --help`
+Or: `docker compose run --rm pqcinblock python main.py --help`
+
+For a complete benchmark run:
+```bash
+docker-compose run --rm pqcinblock python main.py --algorithm ecdsa mldsa --benchmark 5 --warm-up 5 --levels 3
+```
+Or:
+```bash
+docker compose run --rm pqcinblock python main.py --algorithm ecdsa mldsa --benchmark 5 --warm-up 5 --levels 3
+```
+
+*(Generated results are persisted in your local folder)*
 
 ## Minimal Test / Teste mínimo
 
@@ -288,29 +330,26 @@ The experiments were performed in three hardware configurations:
   - 16 GB RAM
   - 234 GB disk space
 
+- **Raspberry PI4** (performance & storage evaluation)
+  - Cortex-A72
+  - Raspberry Pi OS 12 (bookworm) Linux Kernel 6.12.62-v8+
+  - 4 GB RAM
+  - 32 GB disk space
+
+- **Desktop com WSL** (performance & storage evaluation)
+  - Intel Pentium G5400 
+  - WSL: Ubuntu 24.04.4 LTS Linux Kernel 6.18.33.2-microsoft Host: Windows 11 Pro 10.0.22631
+  - WSL: 8 GB Host: 16 GB
+  - 500 GB disk space
+
 
 ### Installation and Setup / Instalação e Configuração
 
-1. Clone this repository:
-```bash
-git clone https://github.com/conseg/PQCinBlock.git
-cd PQCinBlock
-```
+Follow the [instalation guide in the previous section](#installation--instalação).
 
-2. Grant execution permission to the script:
-```bash
-chmod +x install.sh
-```
+### Scripts used in the research paper
 
-3. Install the requirements:
-```bash
-./install.sh
-```
-
-4. Activate the virtual environment:
-```bash
-source venv/bin/activate
-```
+To view the exact commands used in the research paper, see the scripts in the [SBSEG2026](SBSEG2026/) folder.
 
 ### Claim #1: Performance / Reivindicação #1
 
